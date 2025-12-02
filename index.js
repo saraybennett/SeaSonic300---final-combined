@@ -64,7 +64,7 @@ wss.on("connection", (ws, req) => {
       const data = JSON.parse(incomingData); //incomingData string as json
       console.log("Received:", data); //peek at the incoming data
 
-      // Example 1: Button toggle - MODIFY THIS FOR JELLY CODE
+      // server handling of jellypress information - has the jelly been clicked?
       if (data.type === "jellyPress") {
         serverState.jellyOn = !serverState.jellyOn; //toggle the led state
         console.log("Jelly toggled to:", serverState.jellyOn);

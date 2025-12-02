@@ -106,7 +106,8 @@ function getCursorElement(id, cursorImage) {
 
 //update this code with the new method of doing sockets
 
-// Listen for messages named 'userData' from the server
+// Listen for messages named 'userData' from the server - KATIE!
+//ws.onmessage ??
 // socket.on("userData", function (data) {
 //   users[data.id] = data;
 //   // console.log("Received userData:", data);
@@ -128,6 +129,8 @@ ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
     // Handle initial state from server - need to update this with the data that we need in lines 23 in index.js
+    // client nhandling of jellypress information - what do i do when the jelly has been clciked?
+
     if (data.type === "initialState") {
       if (data.state.jellyState) {
         jelly.classList.add("jelly-on");
@@ -149,7 +152,7 @@ ws.onmessage = (event) => {
       console.log("angler:", data.value);
     }
 
-    // // Update jelly value from other clients
+    // Update jelly value from other clients
     if (data.type === "jellyState" && data.value !== undefined) {
       console.log("jellyState:", data.value);
       if (data.value) {
@@ -170,6 +173,7 @@ ws.onmessage = (event) => {
 };
 
 //handle the digital - > physical connection: user clicks on the jelly, motor turns on; user clicks on the jelly again, motor turns off
+// client handling of jellypress information - has the jelly been clicked?
 
 let jelly = document.getElementById("jelly");
 jelly.addEventListener("click", (event) => {

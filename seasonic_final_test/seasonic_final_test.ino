@@ -10,8 +10,8 @@ char ssid[] = SECRET_SSID;  // your network SSID (name)
 char pass[] = SECRET_PASS;  // your network password (use for WPA, or use as key for WEP)
 
 // WebSocket server
-const char* websocket_server = "seasonic3000-final-1.onrender.com";  //update this with the actual server url
-const int websocket_port = 443;                                      // SSL port for wss://
+const char* websocket_server = "seasonic300-final-combined.onrender.com";  //update this with the actual server url
+const int websocket_port = 443;                                            // SSL port for wss://
 
 // Pin definitions
 const int SERVO_PIN = 2;   //servo motor
@@ -283,10 +283,13 @@ void handleMessage(String message) {
     myServo.write(servoPosition);
     Serial.print("Servo position updated to: ");
     Serial.println(servoPosition);
-  } else if (typeStr == "jellyState") {                //check for jellyState, your server is sending the message jellyState with a value of true or false
+  }
+  // arduino handling of jellypress information - jelly been clicked & what to do about that
+  else if (typeStr == "jellyState") {                  //check for jellyState, your server is sending the message jellyState with a value of true or false
     jellyState = doc["value"];                         //parse the led state from the returned json.
     digitalWrite(JELLY_PIN, jellyState ? HIGH : LOW);  //ternery, handle the light value accordingly
     Serial.print("jellyState toggled to: ");
     Serial.println(jellyState ? "ON" : "OFF");
   }
 }
+
