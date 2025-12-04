@@ -48,9 +48,9 @@ const unsigned long heartbeatInterval = 30000;  // Send heartbeat every 30 secon
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial) {
-    ;  //Wait for serial port to connect
-  }
+  // while (!Serial) {
+  //   ;  //Wait for serial port to connect
+  // }
 
   //set pin mode:
   pinMode(JELLY_PIN, OUTPUT);
