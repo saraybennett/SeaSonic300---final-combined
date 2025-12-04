@@ -10,6 +10,7 @@ body {
   /* background-repeat: no-repeat; */
   background-position: center;
   /* min-height: 200vh; */
+  cursor: none; /* Hide default cursor so custom cursor shows */
 }
 
 p {

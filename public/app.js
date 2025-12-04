@@ -48,40 +48,134 @@ let socket; //make sure this is declared in the global scope!
 let userName;
 let userCursor; // Store this user's cursor image
 let creatureText;
+let ws; // Declare WebSocket variable
+let userCursorConfig; // Declare globally so it's accessible everywhere
+let myCursorElement; // Declare cursor element globally
 
-// Connect to WebSocket server
-const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-const ws = new WebSocket(`${protocol}//${window.location.host}`);
-
-ws.onopen = () => {
-  console.log("Connected to server");
-  statusDisplay.textContent = "Connected";
-  statusDisplay.style.color = "green";
-};
-
-ws.onclose = () => {
-  console.log("Disconnected from server");
-  statusDisplay.textContent = "Disconnected";
-  statusDisplay.style.color = "red";
-};
-
-ws.onerror = (error) => {
-  console.error("WebSocket error:", error);
-  statusDisplay.textContent = "Error";
-  statusDisplay.style.color = "red";
-};
-
-// Array of available cursor images
-const cursorImages = [
-  "./images/plankton.png",
-  "./images/angel.png",
-  "./images/urchin.png",
-  "./images/seaweed.png",
-  "./images/gearsnail.png",
+// Cursor-to-audio mapping - each cursor has its own image and audio
+const cursorConfig = [
+  { image: "./images/plankton.png", audio: new Audio("./audio/plankton.mp3"), name: "plankton", isPlaying: false },
+  { image: "./images/angel.png", audio: new Audio("./audio/seaangel.mp3"), name: "angel", isPlaying: false },
+  { image: "./images/urchin.png", audio: new Audio("./audio/urchin.mp3"), name: "urchin", isPlaying: false },
+  { image: "./images/seaweed.png", audio: new Audio("./audio/seaweed.mp3"), name: "seaweed", isPlaying: false },
+  { image: "./images/gearsnail.png", audio: new Audio("./audio/gearsnail.mp3"), name: "gearsnail", isPlaying: false },
+  { image: "./images/angler.png", audio: new Audio("./audio/angler.mp3"), name: "angler", isPlaying: false },
+  { image: "./images/eel.png", audio: new Audio("./audio/eel.mp3"), name: "eel", isPlaying: false },
+  { image: "./images/jellyfish.png", audio: new Audio("./audio/jelly.mp3"), name: "jellyfish", isPlaying: false },
+  { image: "./images/plankton2.png", audio: new Audio("./audio/background.mp3"), name: "plankton2", isPlaying: false },
+  { image: "./images/seaweed2.png", audio: new Audio("./audio/seaweed2.mp3"), name: "seaweed2", isPlaying: false }
 ];
 
-// Assign random cursor image to this user
-userCursor = cursorImages[Math.floor(Math.random() * cursorImages.length)];
+// Configure audio settings for cursor sounds
+cursorConfig.forEach(config => {
+  config.audio.loop = true; // Loop audio while playing
+  config.audio.volume = 0.7; // Adjust volume as needed
+});
+
+// Assign random cursor to this user
+userCursorConfig = cursorConfig[Math.floor(Math.random() * cursorConfig.length)];
+userCursor = userCursorConfig.image;
+userName = userCursorConfig.name; // Use cursor name as username
+
+console.log("User cursor assigned:", userName, userCursor);
+
+// Wait for DOM to be ready before creating cursor and connecting WebSocket
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("DOM loaded, initializing...");
+  
+  // Create the user's own cursor element
+  myCursorElement = document.createElement("img");
+  myCursorElement.id = "my-cursor";
+  myCursorElement.className = "cursor";
+  myCursorElement.src = userCursor;
+  myCursorElement.style.position = "absolute";
+  myCursorElement.style.width = "125px";
+  myCursorElement.style.height = "125px";
+  myCursorElement.style.pointerEvents = "none";
+  myCursorElement.style.transform = "translate(-50%, -50%)";
+  myCursorElement.style.zIndex = "9999";
+  myCursorElement.style.left = "100px"; // Initial position
+  myCursorElement.style.top = "100px";  // Initial position
+  myCursorElement.style.opacity = "1";
+  
+  // Add image load handlers
+  myCursorElement.onload = function() {
+    console.log("Cursor image loaded successfully!");
+  };
+  myCursorElement.onerror = function() {
+    console.error("Failed to load cursor image:", userCursor);
+  };
+  
+  document.body.appendChild(myCursorElement);
+  console.log("User cursor element created and added to DOM");
+  console.log("Cursor element:", myCursorElement);
+  console.log("Cursor src:", myCursorElement.src);
+  console.log("Cursor element in DOM:", document.getElementById("my-cursor"));
+
+  // Connect to WebSocket server after DOM is ready
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const host = window.location.host;
+  const wsUrl = `${protocol}//${host}`;
+  console.log("Connecting to WebSocket:", wsUrl);
+
+  ws = new WebSocket(wsUrl);
+  socket = ws; // Assign ws to socket for compatibility
+
+  ws.onopen = () => {
+    console.log("Connected to WebSocket server");
+  };
+
+  ws.onclose = () => {
+    console.log("Disconnected from server");
+  };
+
+  ws.onerror = (error) => {
+    console.error("WebSocket error:", error);
+  };
+
+  // Setup mouse tracking AFTER cursor element is created
+  //tracking the mouse move
+  //added window page offset for lower elements on the page
+  document.addEventListener("mousemove", function (event) {
+    const x = event.clientX + window.pageXOffset; // Add scroll position
+    const y = event.clientY + window.pageYOffset; // Add scroll position
+    
+    // Update user's own cursor position
+    myCursorElement.style.left = x + "px";
+    myCursorElement.style.top = y + "px";
+    
+    // Send position to server for other users to see
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ 
+        type: "userData", 
+        name: userName, 
+        x: x, 
+        y: y, 
+        cursor: userCursor 
+      }));
+    }
+  });
+
+  // Toggle user's cursor audio on click (play/stop)
+  document.addEventListener("click", function (event) {
+    if (userCursorConfig.isPlaying) {
+      // Stop the audio
+      userCursorConfig.audio.pause();
+      userCursorConfig.audio.currentTime = 0; // Reset to beginning
+      userCursorConfig.isPlaying = false;
+      console.log(`${userCursorConfig.name} audio stopped`);
+    } else {
+      // Play the audio
+      userCursorConfig.audio.play().catch(err => {
+        console.log("Audio play prevented:", err);
+      });
+      userCursorConfig.isPlaying = true;
+      console.log(`${userCursorConfig.name} audio playing`);
+    }
+  });
+  
+  console.log("Event listeners attached for mousemove and click");
+});
 
 let updatingElement = false;
 
@@ -275,15 +369,6 @@ socket.on("eel", function (data) {
     eelAudio.play();
     eel.classList.add("playing"); // Add animation
   }
-});
-
-//tracking the mouse move
-//added window page offset for lower elements on the page
-document.addEventListener("mousemove", function (event) {
-  const x = event.clientX + window.pageXOffset; // Add scroll position
-  const y = event.clientY + window.pageYOffset; // Add scroll position
-  // console.log("mouse x:" + x + " mouse y:" + y);
-  socket.emit("userData", { name: userName, x: x, y: y, cursor: userCursor });
 });
 
 // Fetch immediately on page load
