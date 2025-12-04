@@ -54,35 +54,81 @@ let myCursorElement; // Declare cursor element globally
 
 // Cursor-to-audio mapping - each cursor has its own image and audio
 const cursorConfig = [
-  { image: "./images/plankton.png", audio: new Audio("./audio/plankton.mp3"), name: "plankton", isPlaying: false },
-  { image: "./images/angel.png", audio: new Audio("./audio/seaangel.mp3"), name: "angel", isPlaying: false },
-  { image: "./images/urchin.png", audio: new Audio("./audio/urchin.mp3"), name: "urchin", isPlaying: false },
-  { image: "./images/seaweed.png", audio: new Audio("./audio/seaweed.mp3"), name: "seaweed", isPlaying: false },
-  { image: "./images/gearsnail.png", audio: new Audio("./audio/gearsnail.mp3"), name: "gearsnail", isPlaying: false },
-  { image: "./images/angler.png", audio: new Audio("./audio/angler.mp3"), name: "angler", isPlaying: false },
-  { image: "./images/eel.png", audio: new Audio("./audio/eel.mp3"), name: "eel", isPlaying: false },
-  { image: "./images/jellyfish.png", audio: new Audio("./audio/jelly.mp3"), name: "jellyfish", isPlaying: false },
-  { image: "./images/plankton2.png", audio: new Audio("./audio/background.mp3"), name: "plankton2", isPlaying: false },
-  { image: "./images/seaweed2.png", audio: new Audio("./audio/seaweed2.mp3"), name: "seaweed2", isPlaying: false }
+  {
+    image: "./images/plankton.png",
+    audio: new Audio("./audio/plankton.mp3"),
+    name: "plankton",
+    isPlaying: false,
+  },
+  {
+    image: "./images/angel.png",
+    audio: new Audio("./audio/seaangel.mp3"),
+    name: "angel",
+    isPlaying: false,
+  },
+  {
+    image: "./images/urchin.png",
+    audio: new Audio("./audio/urchin.mp3"),
+    name: "urchin",
+    isPlaying: false,
+  },
+  {
+    image: "./images/seaweed.png",
+    audio: new Audio("./audio/seaweed.mp3"),
+    name: "seaweed",
+    isPlaying: false,
+  },
+  {
+    image: "./images/gearsnail.png",
+    audio: new Audio("./audio/gearsnail.mp3"),
+    name: "gearsnail",
+    isPlaying: false,
+  },
+  {
+    image: "./images/angler.png",
+    audio: new Audio("./audio/angler.mp3"),
+    name: "angler",
+    isPlaying: false,
+  },
+  {
+    image: "./images/eel.png",
+    audio: new Audio("./audio/eel.mp3"),
+    name: "eel",
+    isPlaying: false,
+  },
+  // { image: "./images/jellyfish.png", audio: new Audio("./audio/jelly.mp3"), name: "jellyfish", isPlaying: false },
+  {
+    image: "./images/plankton2.png",
+    audio: new Audio("./audio/background.mp3"),
+    name: "plankton2",
+    isPlaying: false,
+  },
+  {
+    image: "./images/seaweed2.png",
+    audio: new Audio("./audio/seaweed2.mp3"),
+    name: "seaweed2",
+    isPlaying: false,
+  },
 ];
 
 // Configure audio settings for cursor sounds
-cursorConfig.forEach(config => {
+cursorConfig.forEach((config) => {
   config.audio.loop = true; // Loop audio while playing
   config.audio.volume = 0.7; // Adjust volume as needed
 });
 
 // Assign random cursor to this user
-userCursorConfig = cursorConfig[Math.floor(Math.random() * cursorConfig.length)];
+userCursorConfig =
+  cursorConfig[Math.floor(Math.random() * cursorConfig.length)];
 userCursor = userCursorConfig.image;
 userName = userCursorConfig.name; // Use cursor name as username
 
 console.log("User cursor assigned:", userName, userCursor);
 
 // Wait for DOM to be ready before creating cursor and connecting WebSocket
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded, initializing...");
-  
+
   // Create the user's own cursor element
   myCursorElement = document.createElement("img");
   myCursorElement.id = "my-cursor";
@@ -95,17 +141,17 @@ document.addEventListener('DOMContentLoaded', function() {
   myCursorElement.style.transform = "translate(-50%, -50%)";
   myCursorElement.style.zIndex = "9999";
   myCursorElement.style.left = "100px"; // Initial position
-  myCursorElement.style.top = "100px";  // Initial position
+  myCursorElement.style.top = "100px"; // Initial position
   myCursorElement.style.opacity = "1";
-  
+
   // Add image load handlers
-  myCursorElement.onload = function() {
+  myCursorElement.onload = function () {
     console.log("Cursor image loaded successfully!");
   };
-  myCursorElement.onerror = function() {
+  myCursorElement.onerror = function () {
     console.error("Failed to load cursor image:", userCursor);
   };
-  
+
   document.body.appendChild(myCursorElement);
   console.log("User cursor element created and added to DOM");
   console.log("Cursor element:", myCursorElement);
@@ -139,20 +185,22 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener("mousemove", function (event) {
     const x = event.clientX + window.pageXOffset; // Add scroll position
     const y = event.clientY + window.pageYOffset; // Add scroll position
-    
+
     // Update user's own cursor position
     myCursorElement.style.left = x + "px";
     myCursorElement.style.top = y + "px";
-    
+
     // Send position to server for other users to see
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ 
-        type: "userData", 
-        name: userName, 
-        x: x, 
-        y: y, 
-        cursor: userCursor 
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "userData",
+          name: userName,
+          x: x,
+          y: y,
+          cursor: userCursor,
+        })
+      );
     }
   });
 
@@ -166,14 +214,14 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log(`${userCursorConfig.name} audio stopped`);
     } else {
       // Play the audio
-      userCursorConfig.audio.play().catch(err => {
+      userCursorConfig.audio.play().catch((err) => {
         console.log("Audio play prevented:", err);
       });
       userCursorConfig.isPlaying = true;
       console.log(`${userCursorConfig.name} audio playing`);
     }
   });
-  
+
   console.log("Event listeners attached for mousemove and click");
 });
 
@@ -197,23 +245,6 @@ function getCursorElement(id, cursorImage) {
 
   return element;
 }
-
-//update this code with the new method of doing sockets
-
-// Listen for messages named 'userData' from the server - KATIE!
-//ws.onmessage ??
-// socket.on("userData", function (data) {
-//   users[data.id] = data;
-//   // console.log("Received userData:", data);
-
-//   // Only draw cursor if position and cursor image data exists
-//   if (data.x !== undefined && data.y !== undefined && data.cursor) {
-//     var el = getCursorElement(data.id, data.cursor);
-//     el.style.left = data.x + "px";
-//     el.style.top = data.y + "px";
-//     // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
-//   }
-// });
 
 //ws on message - getting data from the server
 
