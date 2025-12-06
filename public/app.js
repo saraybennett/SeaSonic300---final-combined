@@ -153,6 +153,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   document.body.appendChild(myCursorElement);
+
+  //comment these out once code is working
   console.log("User cursor element created and added to DOM");
   console.log("Cursor element:", myCursorElement);
   console.log("Cursor src:", myCursorElement.src);
@@ -220,6 +222,27 @@ document.addEventListener("DOMContentLoaded", function () {
       userCursorConfig.isPlaying = true;
       console.log(`${userCursorConfig.name} audio playing`);
     }
+
+    //show story on button hover - this is working, now need to stylize & put the story up
+    const elementToHover = document.getElementById("hover-button");
+    let popup = document.getElementById("center_popup");
+
+    elementToHover.addEventListener("mouseenter", () => {
+      console.log("im here");
+      popup.style.visibility = "visible";
+
+      let overlay = document.getElementById("overlay");
+      overlay.style.visibility = "visible";
+    });
+
+    elementToHover.addEventListener("mouseleave", () => {
+      popup.style.visibility = "hidden";
+      overlay.style.visibility = "hidden";
+    });
+
+    // infoButton.addEventListener("click", function () {
+    //   console.log("this was clicked");
+    // });
   });
 
   console.log("Event listeners attached for mousemove and click");
