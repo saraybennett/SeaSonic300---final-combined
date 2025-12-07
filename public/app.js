@@ -367,13 +367,14 @@ ws.onmessage = (event) => {
       }
     }
 
-    if (data.type !== "userData") {
+    if (data.type === "userData") {
       users[data.id] = data;
       console.log("Received userData:", data);
 
       // Only draw cursor if position and cursor image data exists
       if (data.x !== undefined && data.y !== undefined && data.cursor) {
         var el = getCursorElement(data.id, data.cursor);
+        console.log(el);
         el.style.left = data.x + "px";
         el.style.top = data.y + "px";
         // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
