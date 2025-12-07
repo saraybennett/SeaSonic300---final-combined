@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(`${userCursorConfig.name} audio playing`);
     }
 
-    //show story on button hover - this is working, now need to stylize & put the story up
+    //show story on button hover - this is working, now need to stylize & put the story up - can trouble shoot this, currently this is only happening after the user clicks off/on
     const elementToHover = document.getElementById("hover-button");
     let popup = document.getElementById("center_popup");
 
@@ -243,6 +243,68 @@ document.addEventListener("DOMContentLoaded", function () {
     // infoButton.addEventListener("click", function () {
     //   console.log("this was clicked");
     // });
+
+    ws.onmessage = (event) => {
+      console.log("Message from server:", event.data);
+      try {
+        const data = JSON.parse(event.data);
+
+        // Handle initial state from server - need to update this with the data that we need in lines 23 in index.js
+        // client nhandling of jellypress information - what do i do when the jelly has been clciked?
+
+        if (data.type === "initialState") {
+          if (data.state.jellyState) {
+            jelly.classList.add("jelly-on");
+          } else {
+            jelly.classList.remove("jelly-on");
+          }
+          // brightnessSlider.value = data.state.brightness;
+          // brightnessValue.textContent = data.state.brightness;
+          // flashSlider.value = data.state.pulseRate;
+          // flashValue.textContent = data.state.pulseRate;
+          //   servoSlider.value = data.state.servoAngle;
+          //   servoValue.textContent = data.state.servoAngle;
+        }
+
+        // // Update angler value from other clients
+        if (data.type === "angler" && data.value !== undefined) {
+          // brightnessSlider.value = data.value;
+          // brightnessValue.textContent = data.value;
+          console.log("angler:", data.value);
+        }
+
+        // Update jelly value from other clients
+        if (data.type === "jellyState" && data.value !== undefined) {
+          console.log("jellyState:", data.value);
+          if (data.value) {
+            jelly.classList.add("jelly-on");
+          } else {
+            jelly.classList.remove("jelly-on");
+          }
+        }
+
+        if (data.type !== "userData") {
+          users[data.id] = data;
+          console.log("Received userData:", data);
+
+          // Only draw cursor if position and cursor image data exists
+          if (data.x !== undefined && data.y !== undefined && data.cursor) {
+            var el = getCursorElement(data.id, data.cursor);
+            el.style.left = data.x + "px";
+            el.style.top = data.y + "px";
+            // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
+          }
+        }
+
+        // Update servo slider from other clients
+        // if (data.type === "servo" && data.value !== undefined) {
+        //   servoSlider.value = data.value;
+        //   servoValue.textContent = data.value;
+        // }
+      } catch (error) {
+        console.error("Error parsing message:", error);
+      }
+    };
   });
 
   console.log("Event listeners attached for mousemove and click");
@@ -307,6 +369,19 @@ ws.onmessage = (event) => {
         jelly.classList.add("jelly-on");
       } else {
         jelly.classList.remove("jelly-on");
+      }
+    }
+
+    if (data.type !== "userData") {
+      users[data.id] = data;
+      console.log("Received userData:", data);
+
+      // Only draw cursor if position and cursor image data exists
+      if (data.x !== undefined && data.y !== undefined && data.cursor) {
+        var el = getCursorElement(data.id, data.cursor);
+        el.style.left = data.x + "px";
+        el.style.top = data.y + "px";
+        // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
       }
     }
 

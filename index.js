@@ -4,6 +4,7 @@ import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import path from "path";
 import { fileURLToPath } from "url";
+import { randomUUID } from "crypto";
 
 //additional setup
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,8 @@ const serverState = {
   anglerDistance: 122,
 };
 
+const users = {}; //object to hold user data
+
 //helpter function for brodcasting data to clients
 function broadcast(data) {
   const message = JSON.stringify(data);
@@ -47,8 +50,14 @@ function broadcast(data) {
 
 wss.on("connection", (ws, req) => {
   //ws is the connected client
+
   console.log("New client connected");
   clients.add(ws); //add the connected client to the clients set
+  console.log(clients);
+
+  //troubleshoot this to add unique ids to each client
+  // ws.id = randomUUID(); // Assign unique id
+  // console.log("Client connected with ID:" ${ws.id});
 
   // Send current state to newly connected client
   ws.send(
@@ -63,6 +72,19 @@ wss.on("connection", (ws, req) => {
     try {
       const data = JSON.parse(incomingData); //incomingData string as json
       console.log("Received:", data); //peek at the incoming data
+
+      //server handling of the cursor data - fix with NEW sockets once we figure that out
+      // if (data.type === "userData") {
+      //   data.id = socket.id;
+
+      //   // Store user data
+      //   clients[socket.id] = data;
+
+      //   console.log(data);
+
+      //   //broadcast the cursor data to all clients
+      //   broadcast({ type: "cursor", x: data.x, y: data.y, id: data.id });
+      // }
 
       // server handling of jellypress information - has the jelly been clicked?
       if (data.type === "jellyPress") {
