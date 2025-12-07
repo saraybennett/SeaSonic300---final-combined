@@ -19,6 +19,7 @@ const wss = new WebSocketServer({ server });
 app.use("/", express.static("public"));
 
 const clients = new Set(); //a js storage object, similiar to array, but will prevent duplicate data
+const users = {}; //object to hold user data
 
 //determine what needs to be kept here - initial values for jellyfish motor off/on, distance for the eel and the angler
 const serverState = {
@@ -33,8 +34,6 @@ const serverState = {
   //angler distance
   anglerDistance: 122,
 };
-
-const users = {}; //object to hold user data
 
 //helpter function for brodcasting data to clients
 function broadcast(data) {
@@ -53,11 +52,11 @@ wss.on("connection", (ws, req) => {
 
   console.log("New client connected");
   clients.add(ws); //add the connected client to the clients set
-  console.log(clients);
+  console.log("thse are the clients:" + clients);
 
-  //troubleshoot this to add unique ids to each client
-  // ws.id = randomUUID(); // Assign unique id
-  // console.log("Client connected with ID:" ${ws.id});
+  //add unique ids to each client
+  ws.id = randomUUID(); // Assign unique id
+  console.log(`Client connected with ID: ${ws.id}`);
 
   // Send current state to newly connected client
   ws.send(
@@ -74,17 +73,25 @@ wss.on("connection", (ws, req) => {
       console.log("Received:", data); //peek at the incoming data
 
       //server handling of the cursor data - fix with NEW sockets once we figure that out
-      // if (data.type === "userData") {
-      //   data.id = socket.id;
+      if (data.type === "userData") {
+        data.id = ws.id;
 
-      //   // Store user data
-      //   clients[socket.id] = data;
+        // Store user data
+        users[ws.id] = data;
 
-      //   console.log(data);
+        console.log(data);
 
-      //   //broadcast the cursor data to all clients
-      //   broadcast({ type: "cursor", x: data.x, y: data.y, id: data.id });
-      // }
+        //broadcast the cursor data to all clients
+        broadcast({
+          type: "userData",
+          data,
+
+          // x: data.x,
+          // y: data.y,
+          // id: data.id,
+          // cursor: data.name,
+        });
+      }
 
       // server handling of jellypress information - has the jelly been clicked?
       if (data.type === "jellyPress") {

@@ -125,190 +125,185 @@ userName = userCursorConfig.name; // Use cursor name as username
 
 console.log("User cursor assigned:", userName, userCursor);
 
-// Wait for DOM to be ready before creating cursor and connecting WebSocket
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM loaded, initializing...");
+// Create the user's own cursor element
+myCursorElement = document.createElement("img");
+myCursorElement.id = "my-cursor";
+myCursorElement.className = "cursor";
+myCursorElement.src = userCursor;
+myCursorElement.style.position = "absolute";
+myCursorElement.style.width = "125px";
+myCursorElement.style.height = "125px";
+myCursorElement.style.pointerEvents = "none";
+myCursorElement.style.transform = "translate(-50%, -50%)";
+myCursorElement.style.zIndex = "9999";
+myCursorElement.style.left = "100px"; // Initial position
+myCursorElement.style.top = "100px"; // Initial position
+myCursorElement.style.opacity = "1";
 
-  // Create the user's own cursor element
-  myCursorElement = document.createElement("img");
-  myCursorElement.id = "my-cursor";
-  myCursorElement.className = "cursor";
-  myCursorElement.src = userCursor;
-  myCursorElement.style.position = "absolute";
-  myCursorElement.style.width = "125px";
-  myCursorElement.style.height = "125px";
-  myCursorElement.style.pointerEvents = "none";
-  myCursorElement.style.transform = "translate(-50%, -50%)";
-  myCursorElement.style.zIndex = "9999";
-  myCursorElement.style.left = "100px"; // Initial position
-  myCursorElement.style.top = "100px"; // Initial position
-  myCursorElement.style.opacity = "1";
+// Add image load handlers
+myCursorElement.onload = function () {
+  console.log("Cursor image loaded successfully!");
+};
+myCursorElement.onerror = function () {
+  console.error("Failed to load cursor image:", userCursor);
+};
 
-  // Add image load handlers
-  myCursorElement.onload = function () {
-    console.log("Cursor image loaded successfully!");
-  };
-  myCursorElement.onerror = function () {
-    console.error("Failed to load cursor image:", userCursor);
-  };
+document.body.appendChild(myCursorElement);
 
-  document.body.appendChild(myCursorElement);
+//comment these out once code is working
+console.log("User cursor element created and added to DOM");
+console.log("Cursor element:", myCursorElement);
+console.log("Cursor src:", myCursorElement.src);
+console.log("Cursor element in DOM:", document.getElementById("my-cursor"));
 
-  //comment these out once code is working
-  console.log("User cursor element created and added to DOM");
-  console.log("Cursor element:", myCursorElement);
-  console.log("Cursor src:", myCursorElement.src);
-  console.log("Cursor element in DOM:", document.getElementById("my-cursor"));
+// Connect to WebSocket server after DOM is ready
+const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+const host = window.location.host;
+const wsUrl = `${protocol}//${host}`;
+console.log("Connecting to WebSocket:", wsUrl);
 
-  // Connect to WebSocket server after DOM is ready
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const host = window.location.host;
-  const wsUrl = `${protocol}//${host}`;
-  console.log("Connecting to WebSocket:", wsUrl);
+ws = new WebSocket(wsUrl);
+socket = ws; // Assign ws to socket for compatibility
 
-  ws = new WebSocket(wsUrl);
-  socket = ws; // Assign ws to socket for compatibility
+ws.onopen = () => {
+  console.log("Connected to WebSocket server");
+};
 
-  ws.onopen = () => {
-    console.log("Connected to WebSocket server");
-  };
+ws.onclose = () => {
+  console.log("Disconnected from server");
+};
 
-  ws.onclose = () => {
-    console.log("Disconnected from server");
-  };
+ws.onerror = (error) => {
+  console.error("WebSocket error:", error);
+};
 
-  ws.onerror = (error) => {
-    console.error("WebSocket error:", error);
-  };
+// Setup mouse tracking AFTER cursor element is created
+//tracking the mouse move
+//added window page offset for lower elements on the page
+document.addEventListener("mousemove", function (event) {
+  const x = event.clientX + window.pageXOffset; // Add scroll position
+  const y = event.clientY + window.pageYOffset; // Add scroll position
 
-  // Setup mouse tracking AFTER cursor element is created
-  //tracking the mouse move
-  //added window page offset for lower elements on the page
-  document.addEventListener("mousemove", function (event) {
-    const x = event.clientX + window.pageXOffset; // Add scroll position
-    const y = event.clientY + window.pageYOffset; // Add scroll position
+  // Update user's own cursor position
+  myCursorElement.style.left = x + "px";
+  myCursorElement.style.top = y + "px";
 
-    // Update user's own cursor position
-    myCursorElement.style.left = x + "px";
-    myCursorElement.style.top = y + "px";
-
-    // Send position to server for other users to see
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(
-        JSON.stringify({
-          type: "userData",
-          name: userName,
-          x: x,
-          y: y,
-          cursor: userCursor,
-        })
-      );
-    }
-  });
-
-  // Toggle user's cursor audio on click (play/stop)
-  document.addEventListener("click", function (event) {
-    if (userCursorConfig.isPlaying) {
-      // Stop the audio
-      userCursorConfig.audio.pause();
-      userCursorConfig.audio.currentTime = 0; // Reset to beginning
-      userCursorConfig.isPlaying = false;
-      console.log(`${userCursorConfig.name} audio stopped`);
-    } else {
-      // Play the audio
-      userCursorConfig.audio.play().catch((err) => {
-        console.log("Audio play prevented:", err);
-      });
-      userCursorConfig.isPlaying = true;
-      console.log(`${userCursorConfig.name} audio playing`);
-    }
-
-    //show story on button hover - this is working, now need to stylize & put the story up - can trouble shoot this, currently this is only happening after the user clicks off/on
-    const elementToHover = document.getElementById("hover-button");
-    let popup = document.getElementById("center_popup");
-
-    elementToHover.addEventListener("mouseenter", () => {
-      console.log("im here");
-      popup.style.visibility = "visible";
-
-      let overlay = document.getElementById("overlay");
-      overlay.style.visibility = "visible";
-    });
-
-    elementToHover.addEventListener("mouseleave", () => {
-      popup.style.visibility = "hidden";
-      overlay.style.visibility = "hidden";
-    });
-
-    // infoButton.addEventListener("click", function () {
-    //   console.log("this was clicked");
-    // });
-
-    ws.onmessage = (event) => {
-      console.log("Message from server:", event.data);
-      try {
-        const data = JSON.parse(event.data);
-
-        // Handle initial state from server - need to update this with the data that we need in lines 23 in index.js
-        // client nhandling of jellypress information - what do i do when the jelly has been clciked?
-
-        if (data.type === "initialState") {
-          if (data.state.jellyState) {
-            jelly.classList.add("jelly-on");
-          } else {
-            jelly.classList.remove("jelly-on");
-          }
-          // brightnessSlider.value = data.state.brightness;
-          // brightnessValue.textContent = data.state.brightness;
-          // flashSlider.value = data.state.pulseRate;
-          // flashValue.textContent = data.state.pulseRate;
-          //   servoSlider.value = data.state.servoAngle;
-          //   servoValue.textContent = data.state.servoAngle;
-        }
-
-        // // Update angler value from other clients
-        if (data.type === "angler" && data.value !== undefined) {
-          // brightnessSlider.value = data.value;
-          // brightnessValue.textContent = data.value;
-          console.log("angler:", data.value);
-        }
-
-        // Update jelly value from other clients
-        if (data.type === "jellyState" && data.value !== undefined) {
-          console.log("jellyState:", data.value);
-          if (data.value) {
-            jelly.classList.add("jelly-on");
-          } else {
-            jelly.classList.remove("jelly-on");
-          }
-        }
-
-        if (data.type !== "userData") {
-          users[data.id] = data;
-          console.log("Received userData:", data);
-
-          // Only draw cursor if position and cursor image data exists
-          if (data.x !== undefined && data.y !== undefined && data.cursor) {
-            var el = getCursorElement(data.id, data.cursor);
-            el.style.left = data.x + "px";
-            el.style.top = data.y + "px";
-            // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
-          }
-        }
-
-        // Update servo slider from other clients
-        // if (data.type === "servo" && data.value !== undefined) {
-        //   servoSlider.value = data.value;
-        //   servoValue.textContent = data.value;
-        // }
-      } catch (error) {
-        console.error("Error parsing message:", error);
-      }
-    };
-  });
-
-  console.log("Event listeners attached for mousemove and click");
+  // Send position to server for other users to see
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(
+      JSON.stringify({
+        type: "userData",
+        name: userName,
+        x: x,
+        y: y,
+        cursor: userCursor,
+      })
+    );
+  }
 });
+
+// Toggle user's cursor audio on click (play/stop)
+document.addEventListener("click", function (event) {
+  if (userCursorConfig.isPlaying) {
+    // Stop the audio
+    userCursorConfig.audio.pause();
+    userCursorConfig.audio.currentTime = 0; // Reset to beginning
+    userCursorConfig.isPlaying = false;
+    console.log(`${userCursorConfig.name} audio stopped`);
+  } else {
+    // Play the audio
+    userCursorConfig.audio.play().catch((err) => {
+      console.log("Audio play prevented:", err);
+    });
+    userCursorConfig.isPlaying = true;
+    console.log(`${userCursorConfig.name} audio playing`);
+  }
+
+  //show story on button hover - this is working, now need to stylize & put the story up - can trouble shoot this, currently this is only happening after the user clicks off/on
+  const elementToHover = document.getElementById("hover-button");
+  let popup = document.getElementById("center_popup");
+
+  elementToHover.addEventListener("mouseenter", () => {
+    console.log("im here");
+    popup.style.visibility = "visible";
+
+    let overlay = document.getElementById("overlay");
+    overlay.style.visibility = "visible";
+  });
+
+  elementToHover.addEventListener("mouseleave", () => {
+    popup.style.visibility = "hidden";
+    overlay.style.visibility = "hidden";
+  });
+
+  // infoButton.addEventListener("click", function () {
+  //   console.log("this was clicked");
+  // });
+
+  ws.onmessage = (event) => {
+    console.log("Message from server:", event.data);
+    try {
+      const data = JSON.parse(event.data);
+
+      // Handle initial state from server - need to update this with the data that we need in lines 23 in index.js
+      // client nhandling of jellypress information - what do i do when the jelly has been clciked?
+
+      if (data.type === "initialState") {
+        if (data.state.jellyState) {
+          jelly.classList.add("jelly-on");
+        } else {
+          jelly.classList.remove("jelly-on");
+        }
+        // brightnessSlider.value = data.state.brightness;
+        // brightnessValue.textContent = data.state.brightness;
+        // flashSlider.value = data.state.pulseRate;
+        // flashValue.textContent = data.state.pulseRate;
+        //   servoSlider.value = data.state.servoAngle;
+        //   servoValue.textContent = data.state.servoAngle;
+      }
+
+      // // Update angler value from other clients
+      if (data.type === "angler" && data.value !== undefined) {
+        // brightnessSlider.value = data.value;
+        // brightnessValue.textContent = data.value;
+        console.log("angler:", data.value);
+      }
+
+      // Update jelly value from other clients
+      if (data.type === "jellyState" && data.value !== undefined) {
+        console.log("jellyState:", data.value);
+        if (data.value) {
+          jelly.classList.add("jelly-on");
+        } else {
+          jelly.classList.remove("jelly-on");
+        }
+      }
+
+      if (data.type !== "userData") {
+        users[data.id] = data;
+        console.log("Received userData:", data);
+
+        // Only draw cursor if position and cursor image data exists - THIS IS NOT WORKING RN, NEED TO TROUBLESHOOT
+        if (data.x !== undefined && data.y !== undefined && data.cursor) {
+          var el = getCursorElement(data.id, data.cursor);
+          el.style.left = data.x + "px";
+          el.style.top = data.y + "px";
+          console.log("Drew cursor for:", data.id, "at", data.x, data.y);
+        }
+      }
+
+      // Update servo slider from other clients
+      // if (data.type === "servo" && data.value !== undefined) {
+      //   servoSlider.value = data.value;
+      //   servoValue.textContent = data.value;
+      // }
+    } catch (error) {
+      console.error("Error parsing message:", error);
+    }
+  };
+});
+
+console.log("Event listeners attached for mousemove and click");
 
 let updatingElement = false;
 
@@ -507,6 +502,193 @@ fetchReadings();
 setInterval(fetchReadings, 3000);
 
 //reference code - leaving here to use as we rebuild the server:
+
+//dom content function - doesnt allow things to run async until the dom is loaded so I think we need to troubleshoot
+// Wait for DOM to be ready before creating cursor and connecting WebSocket
+// document.addEventListener("DOMContentLoaded", function () {
+//   console.log("DOM loaded, initializing...");
+
+//   // Create the user's own cursor element
+//   myCursorElement = document.createElement("img");
+//   myCursorElement.id = "my-cursor";
+//   myCursorElement.className = "cursor";
+//   myCursorElement.src = userCursor;
+//   myCursorElement.style.position = "absolute";
+//   myCursorElement.style.width = "125px";
+//   myCursorElement.style.height = "125px";
+//   myCursorElement.style.pointerEvents = "none";
+//   myCursorElement.style.transform = "translate(-50%, -50%)";
+//   myCursorElement.style.zIndex = "9999";
+//   myCursorElement.style.left = "100px"; // Initial position
+//   myCursorElement.style.top = "100px"; // Initial position
+//   myCursorElement.style.opacity = "1";
+
+//   // Add image load handlers
+//   myCursorElement.onload = function () {
+//     console.log("Cursor image loaded successfully!");
+//   };
+//   myCursorElement.onerror = function () {
+//     console.error("Failed to load cursor image:", userCursor);
+//   };
+
+//   document.body.appendChild(myCursorElement);
+
+//   //comment these out once code is working
+//   console.log("User cursor element created and added to DOM");
+//   console.log("Cursor element:", myCursorElement);
+//   console.log("Cursor src:", myCursorElement.src);
+//   console.log("Cursor element in DOM:", document.getElementById("my-cursor"));
+
+//   // Connect to WebSocket server after DOM is ready
+//   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+//   const host = window.location.host;
+//   const wsUrl = `${protocol}//${host}`;
+//   console.log("Connecting to WebSocket:", wsUrl);
+
+//   ws = new WebSocket(wsUrl);
+//   socket = ws; // Assign ws to socket for compatibility
+
+//   ws.onopen = () => {
+//     console.log("Connected to WebSocket server");
+//   };
+
+//   ws.onclose = () => {
+//     console.log("Disconnected from server");
+//   };
+
+//   ws.onerror = (error) => {
+//     console.error("WebSocket error:", error);
+//   };
+
+//   // Setup mouse tracking AFTER cursor element is created
+//   //tracking the mouse move
+//   //added window page offset for lower elements on the page
+//   document.addEventListener("mousemove", function (event) {
+//     const x = event.clientX + window.pageXOffset; // Add scroll position
+//     const y = event.clientY + window.pageYOffset; // Add scroll position
+
+//     // Update user's own cursor position
+//     myCursorElement.style.left = x + "px";
+//     myCursorElement.style.top = y + "px";
+
+//     // Send position to server for other users to see
+//     if (ws && ws.readyState === WebSocket.OPEN) {
+//       ws.send(
+//         JSON.stringify({
+//           type: "userData",
+//           name: userName,
+//           x: x,
+//           y: y,
+//           cursor: userCursor,
+//         })
+//       );
+//     }
+//   });
+
+//   // Toggle user's cursor audio on click (play/stop)
+//   document.addEventListener("click", function (event) {
+//     if (userCursorConfig.isPlaying) {
+//       // Stop the audio
+//       userCursorConfig.audio.pause();
+//       userCursorConfig.audio.currentTime = 0; // Reset to beginning
+//       userCursorConfig.isPlaying = false;
+//       console.log(`${userCursorConfig.name} audio stopped`);
+//     } else {
+//       // Play the audio
+//       userCursorConfig.audio.play().catch((err) => {
+//         console.log("Audio play prevented:", err);
+//       });
+//       userCursorConfig.isPlaying = true;
+//       console.log(`${userCursorConfig.name} audio playing`);
+//     }
+
+//     //show story on button hover - this is working, now need to stylize & put the story up - can trouble shoot this, currently this is only happening after the user clicks off/on
+//     const elementToHover = document.getElementById("hover-button");
+//     let popup = document.getElementById("center_popup");
+
+//     elementToHover.addEventListener("mouseenter", () => {
+//       console.log("im here");
+//       popup.style.visibility = "visible";
+
+//       let overlay = document.getElementById("overlay");
+//       overlay.style.visibility = "visible";
+//     });
+
+//     elementToHover.addEventListener("mouseleave", () => {
+//       popup.style.visibility = "hidden";
+//       overlay.style.visibility = "hidden";
+//     });
+
+//     // infoButton.addEventListener("click", function () {
+//     //   console.log("this was clicked");
+//     // });
+
+//     ws.onmessage = (event) => {
+//       console.log("Message from server:", event.data);
+//       try {
+//         const data = JSON.parse(event.data);
+
+//         // Handle initial state from server - need to update this with the data that we need in lines 23 in index.js
+//         // client nhandling of jellypress information - what do i do when the jelly has been clciked?
+
+//         if (data.type === "initialState") {
+//           if (data.state.jellyState) {
+//             jelly.classList.add("jelly-on");
+//           } else {
+//             jelly.classList.remove("jelly-on");
+//           }
+//           // brightnessSlider.value = data.state.brightness;
+//           // brightnessValue.textContent = data.state.brightness;
+//           // flashSlider.value = data.state.pulseRate;
+//           // flashValue.textContent = data.state.pulseRate;
+//           //   servoSlider.value = data.state.servoAngle;
+//           //   servoValue.textContent = data.state.servoAngle;
+//         }
+
+//         // // Update angler value from other clients
+//         if (data.type === "angler" && data.value !== undefined) {
+//           // brightnessSlider.value = data.value;
+//           // brightnessValue.textContent = data.value;
+//           console.log("angler:", data.value);
+//         }
+
+//         // Update jelly value from other clients
+//         if (data.type === "jellyState" && data.value !== undefined) {
+//           console.log("jellyState:", data.value);
+//           if (data.value) {
+//             jelly.classList.add("jelly-on");
+//           } else {
+//             jelly.classList.remove("jelly-on");
+//           }
+//         }
+
+//         if (data.type !== "userData") {
+//           users[data.id] = data;
+//           console.log("Received userData:", data);
+
+//           // Only draw cursor if position and cursor image data exists
+//           if (data.x !== undefined && data.y !== undefined && data.cursor) {
+//             var el = getCursorElement(data.id, data.cursor);
+//             el.style.left = data.x + "px";
+//             el.style.top = data.y + "px";
+//             // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
+//           }
+//         }
+
+//         // Update servo slider from other clients
+//         // if (data.type === "servo" && data.value !== undefined) {
+//         //   servoSlider.value = data.value;
+//         //   servoValue.textContent = data.value;
+//         // }
+//       } catch (error) {
+//         console.error("Error parsing message:", error);
+//       }
+//     };
+//   });
+
+//   console.log("Event listeners attached for mousemove and click");
+// });
+
 //getting character info pop up!
 // function showPopup(creatureText) {
 //   let popup = document.getElementById("center_popup");
