@@ -117,7 +117,7 @@ cursorConfig.forEach((config) => {
   config.audio.volume = 0.7; // Adjust volume as needed
 });
 
-// Assign random cursor to this user
+// Assign random cursor to this user - userCurso
 userCursorConfig =
   cursorConfig[Math.floor(Math.random() * cursorConfig.length)];
 userCursor = userCursorConfig.image;
@@ -188,7 +188,7 @@ document.addEventListener("mousemove", function (event) {
   myCursorElement.style.left = x + "px";
   myCursorElement.style.top = y + "px";
 
-  // Send position to server for other users to see
+  // Send position to server for other users to see - userCursror.name on 199 - handle that based on the type, update type to match the server side, move this to a click event
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(
       JSON.stringify({
@@ -336,7 +336,7 @@ ws.onmessage = (event) => {
 
     // Handle initial state from server - need to update this with the data that we need in lines 23 in index.js
     // client nhandling of jellypress information - what do i do when the jelly has been clciked?
-
+    //using data from the server to update the user cursor
     if (data.type === "initialState") {
       if (data.state.jellyState) {
         jelly.classList.add("jelly-on");

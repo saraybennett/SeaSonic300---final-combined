@@ -58,7 +58,8 @@ wss.on("connection", (ws, req) => {
   ws.id = randomUUID(); // Assign unique id
   console.log(`Client connected with ID: ${ws.id}`);
 
-  // Send current state to newly connected client
+  // Send current state to newly connected client - send the cursorIndex - # inside the cursor array
+  //do it within the initial state message on client side - 251, add the cursor value there
   ws.send(
     JSON.stringify({
       type: "initialState",
@@ -111,6 +112,7 @@ wss.on("connection", (ws, req) => {
   });
 
   ws.on("close", () => {
+    //handle client leaving & know which id they have
     console.log("Client disconnected");
     clients.delete(ws);
   });
