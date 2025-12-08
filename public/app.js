@@ -303,6 +303,7 @@ document.addEventListener("click", function (event) {
   };
 });
 
+//commment out once we don't need this
 console.log("Event listeners attached for mousemove and click");
 
 let updatingElement = false;
@@ -372,11 +373,15 @@ ws.onmessage = (event) => {
       console.log("Received userData:", data);
 
       // Only draw cursor if position and cursor image data exists
-      if (data.x !== undefined && data.y !== undefined && data.cursor) {
-        var el = getCursorElement(data.id, data.cursor);
+      if (
+        data.data.x !== undefined &&
+        data.data.y !== undefined &&
+        data.data.cursor
+      ) {
+        var el = getCursorElement(data.data.id, data.data.cursor);
         console.log(el);
-        el.style.left = data.x + "px";
-        el.style.top = data.y + "px";
+        el.style.left = data.data.x + "px";
+        el.style.top = data.data.y + "px";
         // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
       }
     }
@@ -408,40 +413,40 @@ jelly.addEventListener("click", (event) => {
 });
 
 //ANGLER 3 - somehow combine this to make it work for the light/distance
-let angler = document.getElementById("angler");
-getButtonState(); //immediately gets the current state of the led update the dom
-function getButtonState() {
-  fetch("/led") //go to this end point
-    .then((r) => r.json())
-    .then((data) => {
-      toggleButton.textContent = data.lightState ? "ON" : "OFF"; //ternery operator! if statement in one line. if state is true, text is on, else its off
-    });
-}
+// let angler = document.getElementById("angler");
+// getButtonState(); //immediately gets the current state of the led update the dom
+// function getButtonState() {
+//   fetch("/led") //go to this end point
+//     .then((r) => r.json())
+//     .then((data) => {
+//       toggleButton.textContent = data.lightState ? "ON" : "OFF"; //ternery operator! if statement in one line. if state is true, text is on, else its off
+//     });
+// }
 
-angler.addEventListener("click", (event) => {
-  fetch("/led", { method: "POST" }) //changes the state!
-    .then((r) => r.json())
-    .then((data) => {
-      //same logic as above, since the server is returning the led state this will update the button to match
-      toggleButton.textContent = data.lightState ? "ON" : "OFF"; //toggle the dom button to match the button state on the server
-    });
-  console.log("angler was clicked");
-  if (anglerIsPlaying) {
-    anglerAudio.pause();
-    anglerAudio.currentTime = 0; //reset to beginning
-    anglerIsPlaying = false;
-    angler.classList.remove("playing"); // Remove animation
-  } else {
-    anglerIsPlaying = true;
-    anglerAudio.play();
-    angler.classList.add("playing"); // Add animation
-  }
+// angler.addEventListener("click", (event) => {
+//   fetch("/led", { method: "POST" }) //changes the state!
+//     .then((r) => r.json())
+//     .then((data) => {
+//       //same logic as above, since the server is returning the led state this will update the button to match
+//       toggleButton.textContent = data.lightState ? "ON" : "OFF"; //toggle the dom button to match the button state on the server
+//     });
+//   console.log("angler was clicked");
+//   if (anglerIsPlaying) {
+//     anglerAudio.pause();
+//     anglerAudio.currentTime = 0; //reset to beginning
+//     anglerIsPlaying = false;
+//     angler.classList.remove("playing"); // Remove animation
+//   } else {
+//     anglerIsPlaying = true;
+//     anglerAudio.play();
+//     angler.classList.add("playing"); // Add animation
+//   }
 
-  // socket.emit("angler", { name: userName });
-  // creatureText =
-  //   "With our advancements in technology, we were able to explore the depths of the ocean, enabling us to discover new information about anglerfish. We closely observed the relationship between anglerfish and their bacterial symbionts, which give them their ability to glow. This research led us to developing our own artificial bacterial symbionts that now allow us to have light without needing power.";
-  // showPopup(creatureText);
-});
+// socket.emit("angler", { name: userName });
+// creatureText =
+//   "With our advancements in technology, we were able to explore the depths of the ocean, enabling us to discover new information about anglerfish. We closely observed the relationship between anglerfish and their bacterial symbionts, which give them their ability to glow. This research led us to developing our own artificial bacterial symbionts that now allow us to have light without needing power.";
+// showPopup(creatureText);
+// });
 
 // socket.on("angler", function (data) {
 //   if (anglerIsPlaying) {
@@ -457,44 +462,44 @@ angler.addEventListener("click", (event) => {
 // });
 
 //EEL 6
-let eel = document.getElementById("eel");
+// let eel = document.getElementById("eel");
 
-function fetchReadings() {
-  fetch("/data") //hit this endpoint
-    .then((r) => r.json())
-    .then((readings) => {
-      console.log(readings);
+// function fetchReadings() {
+//   fetch("/data") //hit this endpoint
+//     .then((r) => r.json())
+//     .then((readings) => {
+//       console.log(readings);
 
-      //work on what to do with sensor data received by the sensor -- resize image? make it pulse on the page? once we figure that out, then figure out the mapping of the senosr and get it to react that way
+//       //work on what to do with sensor data received by the sensor -- resize image? make it pulse on the page? once we figure that out, then figure out the mapping of the senosr and get it to react that way
 
-      // Show only last 10 readings as formatted JSON
-      // const recent = readings.slice(-10).reverse(); //readings an array, this just pulls the last 10
-      // logContainer.textContent = JSON.stringify(recent, null, 2); //change it to a string for display
-    })
-    .catch((error) => {
-      logContainer.textContent = `Error: ${error.message}`;
-    });
-}
+//       // Show only last 10 readings as formatted JSON
+//       // const recent = readings.slice(-10).reverse(); //readings an array, this just pulls the last 10
+//       // logContainer.textContent = JSON.stringify(recent, null, 2); //change it to a string for display
+//     })
+//     .catch((error) => {
+//       logContainer.textContent = `Error: ${error.message}`;
+//     });
+// }
 
-eel.addEventListener("click", (event) => {
-  socket.emit("eel", { name: userName });
-  creatureText =
-    "Electric eels used to average six feet and the most powerful could generate 860 volts of electricity. Nowadays, eels run up to 200 feet and generate enough power to run small towns. Factions of cooperating eels help us cultivate power and have become a main power source for coastal towns. Other factions of eels have become more aggressive, using their electric abilities to defend their territory in intricate underwater grids maintained to keep the independence and autonomy of sea freedom for those uninterested in collaborating with humans.";
-  showPopup(creatureText);
-});
+// eel.addEventListener("click", (event) => {
+//   socket.emit("eel", { name: userName });
+//   creatureText =
+//     "Electric eels used to average six feet and the most powerful could generate 860 volts of electricity. Nowadays, eels run up to 200 feet and generate enough power to run small towns. Factions of cooperating eels help us cultivate power and have become a main power source for coastal towns. Other factions of eels have become more aggressive, using their electric abilities to defend their territory in intricate underwater grids maintained to keep the independence and autonomy of sea freedom for those uninterested in collaborating with humans.";
+//   showPopup(creatureText);
+// });
 
-socket.on("eel", function (data) {
-  if (eelIsPlaying) {
-    eelAudio.pause();
-    eelAudio.currentTime = 0; //reset to beginning
-    eelIsPlaying = false;
-    eel.classList.remove("playing"); // Remove animation
-  } else {
-    eelIsPlaying = true;
-    eelAudio.play();
-    eel.classList.add("playing"); // Add animation
-  }
-});
+// socket.on("eel", function (data) {
+//   if (eelIsPlaying) {
+//     eelAudio.pause();
+//     eelAudio.currentTime = 0; //reset to beginning
+//     eelIsPlaying = false;
+//     eel.classList.remove("playing"); // Remove animation
+//   } else {
+//     eelIsPlaying = true;
+//     eelAudio.play();
+//     eel.classList.add("playing"); // Add animation
+//   }
+// });
 
 // Fetch immediately on page load
 fetchReadings();
