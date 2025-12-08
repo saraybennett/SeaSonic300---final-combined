@@ -21,6 +21,20 @@ app.use("/", express.static("public"));
 const clients = new Set(); //a js storage object, similiar to array, but will prevent duplicate data
 const users = {}; //object to hold user data
 
+//set up cursor info
+let cursors = [
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+  { id: null },
+]; // and so on
+
 //determine what needs to be kept here - initial values for jellyfish motor off/on, distance for the eel and the angler
 const serverState = {
   //is jellyfish on?
@@ -58,12 +72,26 @@ wss.on("connection", (ws, req) => {
   ws.id = randomUUID(); // Assign unique id
   console.log(`Client connected with ID: ${ws.id}`);
 
+  //assign a cursor index value to the new user
+  let cursorIndex = null;
+
+  for (let i = 0; i < cursors.length; i++) {
+    if (cursors[i].id == null) {
+      //assign a cursor to that user
+      cursors[i].id = ws.id;
+      cursorIndex = i;
+      console.log(cursorIndex);
+      break;
+    }
+  }
+
   // Send current state to newly connected client - send the cursorIndex - # inside the cursor array
   //do it within the initial state message on client side - 251, add the cursor value there
   ws.send(
     JSON.stringify({
       type: "initialState",
       state: serverState,
+      cursorState: cursorIndex,
     })
   );
 
@@ -73,7 +101,7 @@ wss.on("connection", (ws, req) => {
       const data = JSON.parse(incomingData); //incomingData string as json
       console.log("Received:", data); //peek at the incoming data
 
-      //server handling of the cursor data - fix with NEW sockets once we figure that out
+      //server handling of the drawing cursor data
       if (data.type === "userData") {
         data.id = ws.id;
 
@@ -86,14 +114,25 @@ wss.on("connection", (ws, req) => {
         broadcast({
           type: "userData",
           data,
-
-          // x: data.x,
-          // y: data.y,
-          // id: data.id,
-          // cursor: data.name,
         });
       }
 
+      //server handling of click information from clientside
+
+      if (data.type === "userClick") {
+        console.log(data.name + " was clicked");
+        broadcast({ type: "soundTrigger", who: data.name });
+        //based on the data.name - do something here! this would be where you pass along the data to the arduino to turn on the light/motor
+
+        //this is for the angler, pulled from the jellyOn example so will need to update this to angler here and in arduino and client side
+        if (data.name === "angler") {
+          console.log("angler clicked");
+          serverState.jellyOn = !serverState.jellyOn; //toggle the led state
+          console.log("Jelly toggled to:", serverState.jellyOn);
+          //figure out what we want/need to broadcast here to the client/arduino
+          // broadcast({ type: "jellyState", value: serverState.jellyOn });
+        }
+      }
       // server handling of jellypress information - has the jelly been clicked?
       if (data.type === "jellyPress") {
         serverState.jellyOn = !serverState.jellyOn; //toggle the led state
@@ -114,6 +153,13 @@ wss.on("connection", (ws, req) => {
   ws.on("close", () => {
     //handle client leaving & know which id they have
     console.log("Client disconnected");
+    //on disconnects
+    for (let i = 0; i < cursors.length; i++) {
+      if (cursors[i].id == ws.id) {
+        cursors[i].id = null;
+        console.log("Freed up cursor index:" + i);
+      }
+    }
     clients.delete(ws);
   });
 

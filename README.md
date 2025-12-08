@@ -21,3 +21,21 @@ SB notes 12.7:
 
 -once the cursor is being drawn correctly, then will need to work on getting the sound to play for everyone via sockets
 -cursor element drawing but when you first click, there is a static image of the cursor, not sure why this is happening
+
+SB Notes 12.8:
+
+- worked with Adam to get cursorimages handled on the server side so then can tie individual mouseclicks to specific cursor images
+- worked on adding click - > light functionality for angler
+  Received: { type: 'userClick', name: 'angler' }
+  angler was clicked
+  - will continue working, pushing at 6pm just to make sure we have code that is mostly working
+
+to do NOW:
+
+1. figure out how to get the sound to stop/play for everyone based on which cursor was clicked. I know that we're close but just don't quite see how to make it work. we know when a cursor is clicked and we know which element did the clicking, now just need to stop/play the right stound for all users. line 236 in app.js starting with if (data.type === "soundTrigger")
+2. figure out what to do when all cursor elements have been assigned, what to do when the serverCursorIndex is null, have a pop up of some kind letting the user know? let them explore the narrative elements of this? - handle it on the client side somehow - FIGURE THIS OUT (164 app.js)
+
+///
+to do LATER:
+
+- clean up code like removing console.log statements that are no longer necessary & old code we don't need
