@@ -39,6 +39,7 @@ let cursors = [
 const serverState = {
   //is jellyfish on?
   jellyOn: false,
+  anglerOn: false,
 
   // Example 2 state - REMOVE if we don't need
   //   brightness: 128,
@@ -127,10 +128,10 @@ wss.on("connection", (ws, req) => {
         //this is for the angler, pulled from the jellyOn example so will need to update this to angler here and in arduino and client side
         if (data.name === "angler") {
           console.log("angler clicked");
-          serverState.jellyOn = !serverState.jellyOn; //toggle the led state
-          console.log("Jelly toggled to:", serverState.jellyOn);
+          serverState.anglerOn = !serverState.anglerOn; //toggle the led state
+          console.log("Jelly toggled to:", serverState.anglerOn);
           //figure out what we want/need to broadcast here to the client/arduino
-          // broadcast({ type: "jellyState", value: serverState.jellyOn });
+          broadcast({ type: "anglerState", value: serverState.anglerOn });
         }
       }
       // server handling of jellypress information - has the jelly been clicked?

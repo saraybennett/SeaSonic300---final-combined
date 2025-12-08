@@ -36,6 +36,7 @@ Servo myServo;
 //state of my variables
 int servoPosition = 90;  //eventually want a motor that can be an off OR on bool
 bool jellyState = false;
+bool anglerState = false; 
 
 // Connection tracking
 unsigned long lastReconnectAttempt = 0;
@@ -54,9 +55,10 @@ void setup() {
 
   //set pin mode:
   pinMode(JELLY_PIN, OUTPUT);
+  pinMode(ANGLER_PIN, OUTPUT);
 
   // Initialize LEDs to off
-  analogWrite(ANGLER_PIN, 0);
+  digitalWrite(ANGLER_PIN, LOW);
   digitalWrite(JELLY_PIN, LOW);
 
   // Initialize servo - eventually want a diff kind of motor
@@ -247,6 +249,13 @@ void handleMessage(String message) {
       Serial.println(servoPosition);
     }
 
+//updating for anglerOn
+
+  if (doc["state"].containsKey("anglerOn")) {  //when you are sending the initial state from your server the sent object has the key anglerOn
+      anglerState = doc["state"]["anglerOn"];
+      Serial.print("Initial anglerState: ");
+      Serial.println(anglerState);
+    }
     if (doc["state"].containsKey("jellyOn")) {  //when you are sending the initial state from your server the sent object has the key jellyOn, not jellyState
       jellyState = doc["state"]["jellyOn"];
       Serial.print("Initial jellyState: ");
@@ -283,6 +292,13 @@ void handleMessage(String message) {
     myServo.write(servoPosition);
     Serial.print("Servo position updated to: ");
     Serial.println(servoPosition);
+  }
+    // arduino handling of angler press information - angler been clicked & what to do about that
+  else if (typeStr == "anglerState") {                  //check for jellyState, your server is sending the message jellyState with a value of true or false
+    anglerState = doc["value"];                         //parse the led state from the returned json.
+    digitalWrite(ANGLER_PIN, anglerState ? HIGH : LOW);  //ternery, handle the light value accordingly
+    Serial.print("anglerState toggled to: ");
+    Serial.println(anglerState ? "ON" : "OFF");
   }
   // arduino handling of jellypress information - jelly been clicked & what to do about that
   else if (typeStr == "jellyState") {                  //check for jellyState, your server is sending the message jellyState with a value of true or false
