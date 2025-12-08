@@ -125,11 +125,11 @@ wss.on("connection", (ws, req) => {
         broadcast({ type: "soundTrigger", who: data.name });
         //based on the data.name - do something here! this would be where you pass along the data to the arduino to turn on the light/motor
 
-        //this is for the angler, pulled from the jellyOn example so will need to update this to angler here and in arduino and client side
+        //this is for the angler, pulled from the jellyOn example
         if (data.name === "angler") {
           console.log("angler clicked");
           serverState.anglerOn = !serverState.anglerOn; //toggle the led state
-          console.log("Jelly toggled to:", serverState.anglerOn);
+          console.log("Angler toggled to:", serverState.anglerOn);
           //figure out what we want/need to broadcast here to the client/arduino
           broadcast({ type: "anglerState", value: serverState.anglerOn });
         }

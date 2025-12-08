@@ -29,11 +29,13 @@ SB Notes 12.8:
   Received: { type: 'userClick', name: 'angler' }
   angler was clicked
   - will continue working, pushing at 6pm just to make sure we have code that is mostly working
+  - got this working! seems a little glitchy but is working so yay! (will ask Adam tomorrow to see if we can troubleshoot)
 
 to do NOW:
 
 1. figure out how to get the sound to stop/play for everyone based on which cursor was clicked. I know that we're close but just don't quite see how to make it work. we know when a cursor is clicked and we know which element did the clicking, now just need to stop/play the right stound for all users. line 236 in app.js starting with if (data.type === "soundTrigger")
 2. figure out what to do when all cursor elements have been assigned, what to do when the serverCursorIndex is null, have a pop up of some kind letting the user know? let them explore the narrative elements of this? - handle it on the client side somehow - FIGURE THIS OUT (164 app.js)
+3. continue to work on the narrative & critical experience part of the site --
 
 ///
 to do LATER:
