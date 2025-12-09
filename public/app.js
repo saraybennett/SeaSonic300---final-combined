@@ -56,6 +56,7 @@ let userCursorServer;
 const cursorConfig = [
   {
     image: "./images/angler.png",
+    imagePlaying: "./images/angler_playing.png",
     audio: new Audio("./audio/angler.mp3"),
     name: "angler",
     isPlaying: false,
@@ -124,6 +125,35 @@ cursorConfig.forEach((config) => {
   config.audio.volume = 0.7; // Adjust volume as needed
 });
 
+//on page load - show pop up welcome
+window.onload = function () {
+  let popup = document.getElementById("center_popup");
+  popup.style.visibility = "visible";
+
+  let overlay = document.getElementById("overlay");
+  overlay.style.visibility = "visible";
+
+  //display results in popup window
+
+  let displayWelcome = document.getElementById("popup_text");
+
+  displayWelcome.innerHTML = "welcome to my page";
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+
+  let continueButton = document.getElementById("continue_button");
+  continueButton.addEventListener("click", function (event) {
+    // console.log("continue button clicked");
+    popup.style.visibility = "hidden";
+    overlay.style.visibility = "hidden";
+  });
+  // Code to execute after the entire page has loaded
+  console.log("Window loaded!");
+};
+
 // Connect to WebSocket server
 const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 const host = window.location.host;
@@ -162,7 +192,7 @@ ws.onmessage = (event) => {
 
       userCursorConfig = cursorConfig[userCursorServer];
       console.log(userCursorConfig);
-      userCursor = userCursorConfig.image;
+      userCursor = userCursorConfig.image; //modify to send entire cursor config object
       userName = userCursorConfig.name; // Use cursor name as username
 
       console.log("User cursor assigned:", userName, userCursor);
@@ -240,7 +270,6 @@ ws.onmessage = (event) => {
       if (data.who === userName) {
         return;
       }
-
       // searches the user array for the correct user based on data being received
       const targetCreature = cursorConfig.find(
         (item) => item.name === data.who
@@ -253,11 +282,13 @@ ws.onmessage = (event) => {
           targetCreature.audio.currentTime = 0; // sets back to beginning
           targetCreature.isPlaying = false; //resets the boolean flag
           console.log(`${targetCreature.name} stopped`);
+          //image url switch to the normal image
         } else {
           // If it's stopped, play it
           targetCreature.audio.play();
           targetCreature.isPlaying = true;
           console.log(`${targetCreature.name} started`);
+          //image url switch to the playing image
         }
       }
     }
@@ -404,13 +435,11 @@ document.addEventListener("click", function (event) {
   //   };
 });
 
-//commment out once we don't need this
-console.log("Event listeners attached for mousemove and click");
-
 let updatingElement = false;
 
 //Function to create/get cursor elements with unique images for each user
 function getCursorElement(id, cursorImage) {
+  console.log(cursorImage);
   var elementId = "cursor-" + id;
   var element = document.getElementById(elementId);
   if (element == null) {

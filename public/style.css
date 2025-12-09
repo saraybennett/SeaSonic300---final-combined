@@ -5,12 +5,19 @@ body {
   font-weight: 100;
   font-style: normal;
   margin: 0;
-  background-image: url("./images/background.jpeg");
+  /* background-image: url("./images/background.jpeg"); */
+  background: radial-gradient(
+    circle at top left,
+    rgba(122, 122, 223),
+    rgb(2, 1, 6) 50%
+  );
+  /* background: linear-gradient(45deg, rgba(122, 122, 223), rgb(2, 1, 6)); */
   background-size: cover;
   /* background-repeat: no-repeat; */
   background-position: center;
   /* min-height: 200vh; */
-  cursor: none; /* Hide default cursor so custom cursor shows */
+  /* cursor: none; */
+  /* Hide default cursor so custom cursor shows */
 }
 
 p {
@@ -61,7 +68,7 @@ h1 {
 
 /* for information links:  */
 a {
-  color: darkblue;
+  color: rgb(132, 132, 239);
 }
 ul {
   list-style-type: none;
@@ -78,6 +85,21 @@ ul {
 
 #li_two {
   padding: 0px 20px;
+}
+
+.information {
+  height: 10px;
+}
+
+.seasonic-logo {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  z-index: 10;
 }
 
 .creature-img {
