@@ -130,9 +130,6 @@ window.onload = function () {
   let popup = document.getElementById("center_popup");
   popup.style.visibility = "visible";
 
-  let overlay = document.getElementById("overlay");
-  overlay.style.visibility = "visible";
-
   //display results in popup window
 
   let displayWelcome = document.getElementById("popup_text");
