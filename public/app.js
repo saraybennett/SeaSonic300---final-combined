@@ -246,23 +246,6 @@ ws.onmessage = (event) => {
         (item) => item.name === data.who
       );
 
-      //FIGURE OUT HOW TO GET THE AUDIO to play based on which cursor was clicked - i know i'm close on this but just not quite sure how to get it there
-      // let creatureIsPlaying = ;
-
-      // if (userCursorConfig.isPlaying) {
-      //   // Stop the audio
-      //   userCursorConfig.audio.pause();
-      //   userCursorConfig.audio.currentTime = 0; // Reset to beginning
-      //   userCursorConfig.isPlaying = false;
-      //   console.log(`${userCursorConfig.name} audio stopped`);
-      // } else {
-      //   // Play the audio
-      //   userCursorConfig.audio.play().catch((err) => {
-      //     console.log("Audio play prevented:", err);
-      //   });
-      //   userCursorConfig.isPlaying = true;
-      //   console.log(`${userCursorConfig.name} audio playing`);
-      // }
       if (targetCreature) {
         if (targetCreature.isPlaying) {
           // if it's currently playing, then it stopes it
