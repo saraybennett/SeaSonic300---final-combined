@@ -40,3 +40,19 @@ to do NOW:
 to do LATER:
 
 - clean up code like removing console.log statements that are no longer necessary & old code we don't need
+
+SB Notes 12.9:
+
+- worked on getting welcome message pop ups & incorporated styling sent by katie
+
+//
+
+to do NOW:
+
+- work on story.html page & just get the creature & text there for now (hopefully integrate fully into main site when we have time)
+
+///
+to do LATER:
+
+- clean up code like removing console.log statements that are no longer necessary & old code we don't need
+- figure out what to do when all cursor elements have been assigned, what to do when the serverCursorIndex is null, have a pop up of some kind letting the user know? let them explore the narrative elements of this? - handle it on the client side somehow - FIGURE THIS OUT (164 app.js)
