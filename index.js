@@ -130,7 +130,7 @@ wss.on("connection", (ws, req) => {
           console.log("angler clicked");
           serverState.anglerOn = !serverState.anglerOn; //toggle the led state
           console.log("Angler toggled to:", serverState.anglerOn);
-          //figure out what we want/need to broadcast here to the client/arduino
+          //figure out what we want/need to broadcast here to the client/arduino - this is working for the most part but seems a bit glitchy
           broadcast({ type: "anglerState", value: serverState.anglerOn });
         }
       }

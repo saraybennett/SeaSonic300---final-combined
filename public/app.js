@@ -234,7 +234,17 @@ ws.onmessage = (event) => {
     }
 
     if (data.type === "soundTrigger") {
-      console.log("this is the sound data:" + data.who);
+      console.log("Remote sound trigger received for::" + data.who);
+
+      // this should make sure the sound doesn't play twice for the sending user
+      if (data.who === userName) {
+        return;
+      }
+
+      // searches the user array for the correct user based on data being received
+      const targetCreature = cursorConfig.find(
+        (item) => item.name === data.who
+      );
 
       //FIGURE OUT HOW TO GET THE AUDIO to play based on which cursor was clicked - i know i'm close on this but just not quite sure how to get it there
       // let creatureIsPlaying = ;
@@ -253,6 +263,20 @@ ws.onmessage = (event) => {
       //   userCursorConfig.isPlaying = true;
       //   console.log(`${userCursorConfig.name} audio playing`);
       // }
+      if (targetCreature) {
+        if (targetCreature.isPlaying) {
+          // if it's currently playing, then it stopes it
+          targetCreature.audio.pause();
+          targetCreature.audio.currentTime = 0; // sets back to beginning
+          targetCreature.isPlaying = false; //resets the boolean flag
+          console.log(`${targetCreature.name} stopped`);
+        } else {
+          // If it's stopped, play it
+          targetCreature.audio.play();
+          targetCreature.isPlaying = true;
+          console.log(`${targetCreature.name} started`);
+        }
+      }
     }
   } catch (error) {
     console.error("Error parsing message:", error);
