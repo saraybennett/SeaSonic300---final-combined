@@ -58,3 +58,5 @@ to do LATER:
 - figure out what to do when all cursor elements have been assigned, what to do when the serverCursorIndex is null, have a pop up of some kind letting the user know? let them explore the narrative elements of this? - handle it on the client side somehow - FIGURE THIS OUT (164 app.js)
 - seems like for the angler, if the angler cursor is assigned to a user & then they leave, when the new angler is reassigned, the on/off functionatlity stops working (minor since we'll just have the angler loaded for ourselves but would be nice to troubleshoot)
 - work on mobile functionality of both the main site & the story site (add the @media or whatever it is to place elements/buttons & also to resize text)
+
+update to code - fresh push
