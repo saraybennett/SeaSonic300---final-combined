@@ -161,6 +161,7 @@ wss.on("connection", (ws, req) => {
         console.log("Freed up cursor index:" + i);
       }
     }
+    broadcast({ type: "removeImg", value: ws.id });
     clients.delete(ws);
   });
 

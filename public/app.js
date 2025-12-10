@@ -232,7 +232,7 @@ window.onload = function () {
             // }
           }
 
-          // // // Update angler value from other clients
+          // // // Update angler value from other clients - leaving for ref if we build this back in
           // if (data.type === "angler" && data.value !== undefined) {
           //   console.log("angler:", data.value);
           // }
@@ -292,6 +292,15 @@ window.onload = function () {
                 console.log(`${targetCreature.name} started`);
                 //image url switch to the playing image
               }
+            }
+          }
+
+          if (data.type === "removeImg") {
+            var elementId = "cursor-" + data.value;
+            var element = document.getElementById(elementId);
+            if (element) {
+              document.body.removeChild(element);
+              console.log("Removed cursor for disconnected user:", data.value);
             }
           }
         } catch (error) {

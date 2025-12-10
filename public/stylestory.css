@@ -591,3 +591,126 @@ ul {
 #closeAndReturnBtn {
   font-size: 14px;
 }
+
+/* used copilot to help */
+
+@media (max-width: 600px) {
+  /* Layout & heading */
+  .heading {
+    top: 18%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    font-size: 28px;
+    position: fixed;
+    padding: 0 12px;
+  }
+
+  /* Logos */
+  .seasonic-logo-storypage {
+    top: 12%;
+    max-width: 280px;
+  }
+
+  /* Cursor */
+  .cursor {
+    width: 64px;
+    height: 64px;
+    transition: all 0.08s ease;
+    z-index: 9999;
+  }
+
+  /* Creature images scale down and reposition for small screens */
+  .creature-img,
+  .creature-still {
+    width: 40vw !important;
+    max-width: 220px;
+  }
+
+  #plankton {
+    bottom: -80vh;
+    width: 90vw;
+  }
+
+  #seaweed,
+  #seaweed2 {
+    left: 2%;
+    width: 40vw;
+  }
+
+  #angler {
+    top: 50vh;
+    left: 55%;
+    width: 40vw;
+  }
+
+  #angel {
+    top: 80vh;
+    left: 69%;
+    width: 35vw;
+  }
+
+  #urchin {
+    top: 8%;
+    left: 3%;
+    width: 30vw;
+  }
+
+  #eel {
+    top: 60vh;
+    left: 0%;
+    width: 80vw;
+  }
+
+  #gearsnail {
+    top: 30vh;
+    left: 35%;
+    width: 36vw;
+  }
+
+  #jelly {
+    bottom: -30vh;
+    right: 10%;
+    width: 36vw;
+    height: auto;
+  }
+
+  /* Popups / overlays */
+  #center_popup {
+    width: 90vw;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9998;
+  }
+  #pop_up {
+    font-size: 18px;
+    padding: 16px;
+    width: 100%;
+  }
+  #popup_text {
+    font-size: 16px;
+  }
+
+  /* Buttons */
+  .button {
+    min-width: 200px;
+    height: 56px;
+    line-height: 56px;
+    --font-size: 18px;
+    font-size: var(--font-size);
+  }
+  #continue_button {
+    font-size: 18px;
+  }
+
+  /* Nav / info list */
+  ul {
+    padding: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  ul li {
+    padding: 6px 8px;
+  }
+}
