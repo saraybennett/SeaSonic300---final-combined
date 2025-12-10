@@ -135,7 +135,7 @@ window.onload = function () {
   let displayWelcome = document.getElementById("popup_text");
 
   displayWelcome.innerHTML =
-    "Welcome to the SeaSonic3000! <br> <br>  A new era began in 2075. The space mission to colonize Mars was a success, but only sociopaths and narcissists were able to survive there. Back on Earth, society began to flourish. Humanity used AI to adapt new technologies with nature, learning from, and integrating with, our natural world. Consequently, the creatures we studied evolved to adapt to our technological advancements.";
+    "Welcome to the SeaSonic3000! <br> <br>  A new era began in 2075. The space mission to colonize Mars was a success, but only sociopaths and narcissists were able to survive up there. Back on Earth, society began to flourish. Humanity used AI to adapt new technologies with nature, learning from, and integrating with, our natural world. Consequently, the creatures we studied evolved to adapt to our technological advancements.";
   window.scrollTo({
     top: 0,
     left: 0,
