@@ -1,6 +1,8 @@
 console.log("hi");
 
 //global variables
+let myWindow;
+
 const planktonAudio = new Audio("./audio/plankton.mp3");
 planktonAudio.loop = true;
 
@@ -150,9 +152,9 @@ window.onload = function () {
     let continueButton = document.getElementById("continue_button");
     continueButton.style.visibility = "visible";
     continueButton.addEventListener("click", function (event) {
-      popup.style.visibility = "hidden";
-      overlay.style.visibility = "hidden";
-      continueButton.style.visibility = "hidden";
+      // popup.style.visibility = "hidden";
+      // overlay.style.visibility = "hidden";
+      // continueButton.style.visibility = "hidden";
 
       //run whole website:
       // Connect to WebSocket server
@@ -187,50 +189,173 @@ window.onload = function () {
           //using initial data from the server to update the user cursor
           if (data.type === "initialState") {
             console.log("this is the cursor index:" + data.cursorState);
-            userCursorServer = data.cursorState;
-            console.log(userCursorServer);
-
             //if the cursorState is null-do something HERE !!!!
+            if (data.cursorState === null) {
+              let continueButton = document.getElementById("continue_button");
+              continueButton.style.visibility = "hidden";
 
-            userCursorConfig = cursorConfig[userCursorServer];
-            console.log(userCursorConfig);
-            userCursor = userCursorConfig.image; //modify to send entire cursor config object
-            userName = userCursorConfig.name; // Use cursor name as username
+              let popup = document.getElementById("center_popup");
+              popup.style.visibility = "visible";
 
-            console.log("User cursor assigned:", userName, userCursor);
+              let overlay = document.getElementById("overlay");
+              overlay.style.visibility = "visible";
 
-            //do all the cursor work here:
-            myCursorElement = document.createElement("img");
-            myCursorElement.id = "my-cursor";
-            myCursorElement.className = "cursor";
-            myCursorElement.src = userCursor;
-            myCursorElement.style.position = "absolute";
-            myCursorElement.style.width = "125px";
-            myCursorElement.style.height = "125px";
-            myCursorElement.style.pointerEvents = "none";
-            myCursorElement.style.transform = "translate(-50%, -50%)";
-            myCursorElement.style.zIndex = "9999";
-            myCursorElement.style.left = center; // Initial position
-            myCursorElement.style.top = center; // Initial position
-            myCursorElement.style.opacity = "1";
+              //display results in popup window
 
-            // Add image load handlers
-            myCursorElement.onload = function () {
-              console.log("Cursor image loaded successfully!");
-            };
-            myCursorElement.onerror = function () {
-              console.error("Failed to load cursor image:", userCursor);
-            };
+              let cursorFull = document.getElementById("popup_text");
 
-            document.body.appendChild(myCursorElement);
+              cursorFull.innerHTML =
+                "All creatures are currently in use. Please try again later.";
 
-            //below code not needed for now, leaving in case we need to ref later
-            // if (data.state.jellyState) {
-            //   jelly.classList.add("jelly-on");
-            // } else {
-            //   jelly.classList.remove("jelly-on");
-            // }
+              return;
+            } else {
+              popup.style.visibility = "hidden";
+              overlay.style.visibility = "hidden";
+              continueButton.style.visibility = "hidden";
+              userCursorServer = data.cursorState;
+              console.log(userCursorServer);
+
+              userCursorConfig = cursorConfig[userCursorServer];
+              console.log(userCursorConfig);
+              userCursor = userCursorConfig.image; //modify to send entire cursor config object
+              userName = userCursorConfig.name; // Use cursor name as username
+
+              console.log("User cursor assigned:", userName, userCursor);
+
+              //do all the cursor work here:
+              myCursorElement = document.createElement("img");
+              myCursorElement.id = "my-cursor";
+              myCursorElement.className = "cursor";
+              myCursorElement.src = userCursor;
+              myCursorElement.style.position = "absolute";
+              myCursorElement.style.width = "125px";
+              myCursorElement.style.height = "125px";
+              myCursorElement.style.pointerEvents = "none";
+              myCursorElement.style.transform = "translate(-50%, -50%)";
+              myCursorElement.style.zIndex = "9999";
+              // myCursorElement.style.left = center; // Initial position
+              // myCursorElement.style.top = center; // Initial position
+              myCursorElement.style.opacity = "1";
+
+              // Add image load handlers
+              myCursorElement.onload = function () {
+                console.log("Cursor image loaded successfully!");
+              };
+              myCursorElement.onerror = function () {
+                console.error("Failed to load cursor image:", userCursor);
+              };
+
+              document.body.appendChild(myCursorElement);
+
+              //below code not needed for now, leaving in case we need to ref later
+              // if (data.state.jellyState) {
+              //   jelly.classList.add("jelly-on");
+              // } else {
+              //   jelly.classList.remove("jelly-on");
+              // }
+              if (data.type === "userData") {
+                users[data.id] = data;
+                console.log("Received userData:", data);
+
+                // Only draw cursor if position and cursor image data exists
+                if (
+                  data.data.x !== undefined &&
+                  data.data.y !== undefined &&
+                  data.data.cursor
+                ) {
+                  var el = getCursorElement(data.data.id, data.data.cursor);
+                  console.log(el);
+                  el.style.left = data.data.x + "px";
+                  el.style.top = data.data.y + "px";
+                  // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
+                }
+              }
+              if (data.type === "soundTrigger") {
+                console.log("Remote sound trigger received for::" + data.who);
+
+                // this should make sure the sound doesn't play twice for the sending user
+                if (data.who === userName) {
+                  return;
+                }
+                // searches the user array for the correct user based on data being received
+                const targetCreature = cursorConfig.find(
+                  (item) => item.name === data.who
+                );
+
+                if (targetCreature) {
+                  if (targetCreature.isPlaying) {
+                    // if it's currently playing, then it stopes it
+                    targetCreature.audio.pause();
+                    targetCreature.audio.currentTime = 0; // sets back to beginning
+                    targetCreature.isPlaying = false; //resets the boolean flag
+                    console.log(`${targetCreature.name} stopped`);
+                    //image url switch to the normal image
+                  } else {
+                    // If it's stopped, play it
+                    targetCreature.audio.play();
+                    targetCreature.isPlaying = true;
+                    console.log(`${targetCreature.name} started`);
+                    //image url switch to the playing image
+                  }
+                }
+              }
+              //something goes here
+              if (data.type === "removeImg") {
+                var elementId = "cursor-" + data.value;
+                var element = document.getElementById(elementId);
+                if (element) {
+                  document.body.removeChild(element);
+                  console.log(
+                    "Removed cursor for disconnected user:",
+                    data.value
+                  );
+                }
+              }
+            }
           }
+
+          //   userCursorServer = data.cursorState;
+          //   console.log(userCursorServer);
+
+          //   userCursorConfig = cursorConfig[userCursorServer];
+          //   console.log(userCursorConfig);
+          //   userCursor = userCursorConfig.image; //modify to send entire cursor config object
+          //   userName = userCursorConfig.name; // Use cursor name as username
+
+          //   console.log("User cursor assigned:", userName, userCursor);
+
+          //   //do all the cursor work here:
+          //   myCursorElement = document.createElement("img");
+          //   myCursorElement.id = "my-cursor";
+          //   myCursorElement.className = "cursor";
+          //   myCursorElement.src = userCursor;
+          //   myCursorElement.style.position = "absolute";
+          //   myCursorElement.style.width = "125px";
+          //   myCursorElement.style.height = "125px";
+          //   myCursorElement.style.pointerEvents = "none";
+          //   myCursorElement.style.transform = "translate(-50%, -50%)";
+          //   myCursorElement.style.zIndex = "9999";
+          //   myCursorElement.style.left = center; // Initial position
+          //   myCursorElement.style.top = center; // Initial position
+          //   myCursorElement.style.opacity = "1";
+
+          //   // Add image load handlers
+          //   myCursorElement.onload = function () {
+          //     console.log("Cursor image loaded successfully!");
+          //   };
+          //   myCursorElement.onerror = function () {
+          //     console.error("Failed to load cursor image:", userCursor);
+          //   };
+
+          //   document.body.appendChild(myCursorElement);
+
+          //   //below code not needed for now, leaving in case we need to ref later
+          //   // if (data.state.jellyState) {
+          //   //   jelly.classList.add("jelly-on");
+          //   // } else {
+          //   //   jelly.classList.remove("jelly-on");
+          //   // }
+          // }
 
           // // // Update angler value from other clients - leaving for ref if we build this back in
           // if (data.type === "angler" && data.value !== undefined) {
@@ -247,62 +372,62 @@ window.onload = function () {
           //   }
           // }
 
-          if (data.type === "userData") {
-            users[data.id] = data;
-            console.log("Received userData:", data);
+          // if (data.type === "userData") {
+          //   users[data.id] = data;
+          //   console.log("Received userData:", data);
 
-            // Only draw cursor if position and cursor image data exists
-            if (
-              data.data.x !== undefined &&
-              data.data.y !== undefined &&
-              data.data.cursor
-            ) {
-              var el = getCursorElement(data.data.id, data.data.cursor);
-              console.log(el);
-              el.style.left = data.data.x + "px";
-              el.style.top = data.data.y + "px";
-              // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
-            }
-          }
+          //   // Only draw cursor if position and cursor image data exists
+          //   if (
+          //     data.data.x !== undefined &&
+          //     data.data.y !== undefined &&
+          //     data.data.cursor
+          //   ) {
+          //     var el = getCursorElement(data.data.id, data.data.cursor);
+          //     console.log(el);
+          //     el.style.left = data.data.x + "px";
+          //     el.style.top = data.data.y + "px";
+          //     // console.log("Drew cursor for:", data.id, "at", data.x, data.y);
+          //   }
+          // }
 
-          if (data.type === "soundTrigger") {
-            console.log("Remote sound trigger received for::" + data.who);
+          // if (data.type === "soundTrigger") {
+          //   console.log("Remote sound trigger received for::" + data.who);
 
-            // this should make sure the sound doesn't play twice for the sending user
-            if (data.who === userName) {
-              return;
-            }
-            // searches the user array for the correct user based on data being received
-            const targetCreature = cursorConfig.find(
-              (item) => item.name === data.who
-            );
+          //   // this should make sure the sound doesn't play twice for the sending user
+          //   if (data.who === userName) {
+          //     return;
+          //   }
+          //   // searches the user array for the correct user based on data being received
+          //   const targetCreature = cursorConfig.find(
+          //     (item) => item.name === data.who
+          //   );
 
-            if (targetCreature) {
-              if (targetCreature.isPlaying) {
-                // if it's currently playing, then it stopes it
-                targetCreature.audio.pause();
-                targetCreature.audio.currentTime = 0; // sets back to beginning
-                targetCreature.isPlaying = false; //resets the boolean flag
-                console.log(`${targetCreature.name} stopped`);
-                //image url switch to the normal image
-              } else {
-                // If it's stopped, play it
-                targetCreature.audio.play();
-                targetCreature.isPlaying = true;
-                console.log(`${targetCreature.name} started`);
-                //image url switch to the playing image
-              }
-            }
-          }
+          //   if (targetCreature) {
+          //     if (targetCreature.isPlaying) {
+          //       // if it's currently playing, then it stopes it
+          //       targetCreature.audio.pause();
+          //       targetCreature.audio.currentTime = 0; // sets back to beginning
+          //       targetCreature.isPlaying = false; //resets the boolean flag
+          //       console.log(`${targetCreature.name} stopped`);
+          //       //image url switch to the normal image
+          //     } else {
+          //       // If it's stopped, play it
+          //       targetCreature.audio.play();
+          //       targetCreature.isPlaying = true;
+          //       console.log(`${targetCreature.name} started`);
+          //       //image url switch to the playing image
+          //     }
+          //   }
+          // }
 
-          if (data.type === "removeImg") {
-            var elementId = "cursor-" + data.value;
-            var element = document.getElementById(elementId);
-            if (element) {
-              document.body.removeChild(element);
-              console.log("Removed cursor for disconnected user:", data.value);
-            }
-          }
+          // if (data.type === "removeImg") {
+          //   var elementId = "cursor-" + data.value;
+          //   var element = document.getElementById(elementId);
+          //   if (element) {
+          //     document.body.removeChild(element);
+          //     console.log("Removed cursor for disconnected user:", data.value);
+          //   }
+          // }
         } catch (error) {
           console.error("Error parsing message:", error);
         }
