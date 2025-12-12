@@ -145,7 +145,7 @@ window.onload = function () {
   let nextButton = document.getElementById("next-button");
   nextButton.addEventListener("click", function (event) {
     displayWelcome.innerHTML =
-      "This is a collaborative physical and web-based project linked through a shared sonic experience. There will be elements of the site that affect the physical world and vice versa. When you enter the site, you’ll be transformed into one of the creatures.  <br> <br> Start by clicking your creature and see where that takes you! ";
+      "This is a collaborative physical and web-based project linked through a shared sonic experience. There will be elements of the site that affect the physical world and vice versa. When you enter the site, you’ll be transformed into one of the creatures.  <br> <br> Each creature makes a unique sound. Can you discover what yours is? Start by clicking your creature and see where that takes you! ";
     nextButton.style.visibility = "hidden";
     let continueButton = document.getElementById("continue_button");
     continueButton.style.visibility = "visible";
@@ -191,6 +191,25 @@ window.onload = function () {
             console.log(userCursorServer);
 
             //if the cursorState is null-do something HERE !!!!
+
+            if (data.cursorState === null) {
+              // alert(
+              //   "All cursors are currently in use. You can listen to the shared sonic experience & explore more of the world by clicking the button on the top right. Please refresh the page later to be transformed into a creature."
+              // );
+
+              popup.style.visibility = "visible";
+              overlay.style.visibility = "visible";
+              let cursorFull = document.getElementById("popup_text");
+              cursorFull.innerHTML =
+                "All cursors are currently in use. You can listen to the shared sonic experience & explore more of the world by clicking the learn more button. <br><br>Please refresh the page later to be transformed into a creature.";
+              let closeButton = document.getElementById("close_button");
+              closeButton.style.visibility = "visible";
+              closeButton.addEventListener("click", function (event) {
+                popup.style.visibility = "hidden";
+                overlay.style.visibility = "hidden";
+                closeButton.style.visibility = "hidden";
+              });
+            }
 
             userCursorConfig = cursorConfig[userCursorServer];
             console.log(userCursorConfig);

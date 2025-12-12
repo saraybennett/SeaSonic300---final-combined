@@ -60,3 +60,7 @@ to do LATER:
 - work on mobile functionality of both the main site & the story site (add the @media or whatever it is to place elements/buttons & also to resize text)
 
 update to code - fresh push
+
+SB 12.11 notes
+
+- tried to add a screen for what to do when the cursor value came back NULL but something else went wrong so just pushed to a different branch to ref later so I didn't lose the work & plan to come back later, reverted back to main and it's fine! not as stylized as I'd like but fine for now
