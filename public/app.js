@@ -135,7 +135,7 @@ window.onload = function () {
   let displayWelcome = document.getElementById("popup_text");
 
   displayWelcome.innerHTML =
-    "Welcome to the SeaSonic3000! <br> <br>  A new era began in 2075. The space mission to colonize Mars was a success, but only sociopaths and narcissists were able to survive up there. Back on Earth, society began to flourish. Humanity used AI to adapt new technologies with nature, learning from, and integrating with, our natural world. Consequently, the creatures we studied evolved to adapt to our technological advancements.";
+    "Welcome to the SeaSonic3000! <br> <br>  A new era began in 2075. The space mission to colonize Mars was a success, but only narcissists were able to survive up there. Back on Earth, society began to flourish. Humanity used AI to adapt new technologies with nature. In turn, the creatures we studied evolved with us and our technological advancements.";
   window.scrollTo({
     top: 0,
     left: 0,
@@ -145,7 +145,7 @@ window.onload = function () {
   let nextButton = document.getElementById("next-button");
   nextButton.addEventListener("click", function (event) {
     displayWelcome.innerHTML =
-      "This is a collaborative physical and web-based project linked through a shared sonic experience. There will be elements of the site that affect the physical world and vice versa. When you enter the site, you’ll be transformed into one of the creatures.  <br> <br> Each creature makes a unique sound. Can you discover what yours is? Start by clicking your creature and see where that takes you! ";
+      "This is a collaborative physical and web-based project linked through a shared sonic experience. There will be elements of the site that affect the physical world and vice versa. When you enter the site, you’ll be transformed into one of the creatures.  <br> <br> Each creature makes a unique sound. Can you discover what yours is? Start by clicking or tapping your creature and see where that takes you! ";
     nextButton.style.visibility = "hidden";
     let continueButton = document.getElementById("continue_button");
     continueButton.style.visibility = "visible";

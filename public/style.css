@@ -382,6 +382,9 @@ ul {
 
 /* resize for phone screen - copilot wrote */
 @media (max-width: 750px) { /* General page/layout */ .heading { top: 18%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; font-size: 32px; position: fixed; padding: 0 12px; }
+body{  background-repeat: repeat;
+
+}
 
 /* Logos */ .seasonic-logo { top: 22%; max-width: 320px; z-index: 0; } .seasonic-logo-storypage { top: 12%; max-width: 260px; }
 
@@ -389,10 +392,10 @@ ul {
 
 /* Popups / overlays */ #center_popup { width: 90vw; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 9998; } #pop_up { font-size: 18px; padding: 16px; width: 100%; } #popup_text { font-size: 16px; }
 
-/* Buttons */ .button { min-width: 200px; height: 56px; line-height: 56px; --font-size: 18px; font-size: var(--font-size); } #continue_button { font-size: 18px; visibility: hidden; }
+/* Buttons */ .button { min-width: 200px; height: 56px; line-height: 56px; --font-size: 18px; font-size: var(--font-size); } #continue_button { font-size: 18px; visibility: hidden; } #information { font-size: 12px; } 
 
 /* Nav / info list */ ul { padding: 12px 12px 6px 12px; justify-content: center; flex-wrap: wrap;  position: absolute;
-  bottom: 35px;
+  top: 0px;
   left: 0; /* Or adjust as needed for horizontal positioning */
   width: 100%; /* Or adjust as needed */ } ul li { padding: 6px 10px; }
 
