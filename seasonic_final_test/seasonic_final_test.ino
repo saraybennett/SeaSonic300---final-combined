@@ -14,9 +14,15 @@ const char* websocket_server = "seasonic300-final-combined.onrender.com";  //upd
 const int websocket_port = 443;                                            // SSL port for wss://
 
 // Pin definitions
-const int SERVO_PIN = 2;   //servo motor
-const int JELLY_PIN = 3;   //jelly light for testing
-const int ANGLER_PIN = 9;  //angler light
+const int SERVO_PIN = 10;   //servo motor
+const int JELLY_PIN = 9;  //jelly light for testing
+const int ANGLER_PIN = 2;
+const int ANGLER_PIN1 = 3;
+const int ANGLER_PIN2 = 4;
+const int ANGLER_PIN3 = 5;
+const int ANGLER_PIN4 = 6;
+const int ANGLER_PIN5 = 7;
+const int ANGLER_PIN6 = 8;  //angler light
 
 
 // make an instance of the library:
@@ -36,7 +42,7 @@ Servo myServo;
 //state of my variables
 int servoPosition = 90;  //eventually want a motor that can be an off OR on bool
 bool jellyState = false;
-bool anglerState = false; 
+bool anglerState = false;
 
 // Connection tracking
 unsigned long lastReconnectAttempt = 0;
@@ -59,6 +65,12 @@ void setup() {
 
   // Initialize LEDs to off
   digitalWrite(ANGLER_PIN, LOW);
+  digitalWrite(ANGLER_PIN1, LOW);
+  digitalWrite(ANGLER_PIN2, LOW);
+  digitalWrite(ANGLER_PIN3, LOW);
+  digitalWrite(ANGLER_PIN4, LOW);
+  digitalWrite(ANGLER_PIN5, LOW);
+   digitalWrite(ANGLER_PIN6, LOW);
   digitalWrite(JELLY_PIN, LOW);
 
   // Initialize servo - eventually want a diff kind of motor
@@ -249,9 +261,9 @@ void handleMessage(String message) {
       Serial.println(servoPosition);
     }
 
-//updating for anglerOn
+    //updating for anglerOn
 
-  if (doc["state"].containsKey("anglerOn")) {  //when you are sending the initial state from your server the sent object has the key anglerOn
+    if (doc["state"].containsKey("anglerOn")) {  //when you are sending the initial state from your server the sent object has the key anglerOn
       anglerState = doc["state"]["anglerOn"];
       Serial.print("Initial anglerState: ");
       Serial.println(anglerState);
@@ -293,10 +305,16 @@ void handleMessage(String message) {
     Serial.print("Servo position updated to: ");
     Serial.println(servoPosition);
   }
-    // arduino handling of angler press information - angler been clicked & what to do about that
-  else if (typeStr == "anglerState") {                  //check for jellyState, your server is sending the message jellyState with a value of true or false
-    anglerState = doc["value"];                         //parse the led state from the returned json.
-    digitalWrite(ANGLER_PIN, anglerState ? HIGH : LOW);  //ternery, handle the light value accordingly
+  // arduino handling of angler press information - angler been clicked & what to do about that
+  else if (typeStr == "anglerState") {                   //check for jellyState, your server is sending the message jellyState with a value of true or false
+    anglerState = doc["value"];                          //parse the led state from the returned json.
+    digitalWrite(ANGLER_PIN, anglerState ? HIGH : LOW);
+    digitalWrite(ANGLER_PIN1, anglerState ? HIGH : LOW);
+    digitalWrite(ANGLER_PIN2, anglerState ? HIGH : LOW);
+    digitalWrite(ANGLER_PIN3, anglerState ? HIGH : LOW);
+    digitalWrite(ANGLER_PIN4, anglerState ? HIGH : LOW);
+    digitalWrite(ANGLER_PIN5, anglerState ? HIGH : LOW);
+    digitalWrite(ANGLER_PIN6, anglerState ? HIGH : LOW);  //ternery, handle the light value accordingly
     Serial.print("anglerState toggled to: ");
     Serial.println(anglerState ? "ON" : "OFF");
   }
@@ -308,4 +326,3 @@ void handleMessage(String message) {
     Serial.println(jellyState ? "ON" : "OFF");
   }
 }
-
