@@ -55,9 +55,9 @@ let userCursorServer;
 // Cursor-to-audio mapping - each cursor has its own image and audio
 const cursorConfig = [
   {
-    image: "./images/jellyfish.png",
-    audio: new Audio("./audio/jelly.mp3"),
-    name: "jellyfish",
+    image: "./images/plankton2.png",
+    audio: new Audio("./audio/background.mp3"),
+    name: "plankton2",
     isPlaying: false,
   },
   {
@@ -65,6 +65,12 @@ const cursorConfig = [
     imagePlaying: "./images/angler_playing.png",
     audio: new Audio("./audio/angler.mp3"),
     name: "angler",
+    isPlaying: false,
+  },
+  {
+    image: "./images/jellyfish.png",
+    audio: new Audio("./audio/jelly.mp3"),
+    name: "jellyfish",
     isPlaying: false,
   },
   {
@@ -105,12 +111,6 @@ const cursorConfig = [
     isPlaying: false,
   },
 
-  {
-    image: "./images/plankton2.png",
-    audio: new Audio("./audio/background.mp3"),
-    name: "plankton2",
-    isPlaying: false,
-  },
   {
     image: "./images/seaweed2.png",
     audio: new Audio("./audio/seaweed2.mp3"),
