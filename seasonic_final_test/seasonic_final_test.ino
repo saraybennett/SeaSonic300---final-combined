@@ -14,8 +14,8 @@ const char* websocket_server = "seasonic300-final-combined.onrender.com";  //upd
 const int websocket_port = 443;                                            // SSL port for wss://
 
 // Pin definitions
-const int SERVO_PIN = 10;   //servo motor
-const int JELLY_PIN = 9;  //jelly light for testing
+const int SERVO_PIN = 10;  //servo motor
+const int JELLY_PIN = 9;   //jelly light for testing
 const int ANGLER_PIN = 2;
 const int ANGLER_PIN1 = 3;
 const int ANGLER_PIN2 = 4;
@@ -70,7 +70,7 @@ void setup() {
   digitalWrite(ANGLER_PIN3, LOW);
   digitalWrite(ANGLER_PIN4, LOW);
   digitalWrite(ANGLER_PIN5, LOW);
-   digitalWrite(ANGLER_PIN6, LOW);
+  digitalWrite(ANGLER_PIN6, LOW);
   digitalWrite(JELLY_PIN, LOW);
 
   // Initialize servo - eventually want a diff kind of motor
@@ -306,8 +306,8 @@ void handleMessage(String message) {
     Serial.println(servoPosition);
   }
   // arduino handling of angler press information - angler been clicked & what to do about that
-  else if (typeStr == "anglerState") {                   //check for jellyState, your server is sending the message jellyState with a value of true or false
-    anglerState = doc["value"];                          //parse the led state from the returned json.
+  else if (typeStr == "anglerState") {  //check for jellyState, your server is sending the message jellyState with a value of true or false
+    anglerState = doc["value"];         //parse the led state from the returned json.
     digitalWrite(ANGLER_PIN, anglerState ? HIGH : LOW);
     digitalWrite(ANGLER_PIN1, anglerState ? HIGH : LOW);
     digitalWrite(ANGLER_PIN2, anglerState ? HIGH : LOW);

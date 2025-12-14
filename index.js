@@ -133,13 +133,20 @@ wss.on("connection", (ws, req) => {
           //figure out what we want/need to broadcast here to the client/arduino - this is working for the most part but seems a bit glitchy
           broadcast({ type: "anglerState", value: serverState.anglerOn });
         }
+        if (data.name === "jelly") {
+          console.log("jelly clicked");
+          serverState.jellyOn = !serverState.jellyOn; //toggle the led state
+          console.log("Jelly toggled to:", serverState.jellyOn);
+          //figure out what we want/need to broadcast here to the client/arduino - this is working for the most part but seems a bit glitchy
+          broadcast({ type: "jellyState", value: serverState.jellyOn });
+        }
       }
       // server handling of jellypress information - has the jelly been clicked?
-      if (data.type === "jellyPress") {
-        serverState.jellyOn = !serverState.jellyOn; //toggle the led state
-        console.log("Jelly toggled to:", serverState.jellyOn);
-        broadcast({ type: "jellyState", value: serverState.jellyOn });
-      }
+      // if (data.type === "jelly") {
+      //   serverState.jellyOn = !serverState.jellyOn; //toggle the led state
+      //   console.log("Jelly toggled to:", serverState.jellyOn);
+      //   broadcast({ type: "jellyState", value: serverState.jellyOn });
+      // }
 
       //handle angler data - THIS IS NOT WORKING, NEED TO TROUBLESHOOT - SB 11.30
       if (data.type === "brightness_angler") {
