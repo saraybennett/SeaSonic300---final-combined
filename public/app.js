@@ -61,18 +61,19 @@ const cursorConfig = [
     isPlaying: false,
   },
   {
+    image: "./images/jellyfish.png",
+    audio: new Audio("./audio/jelly.mp3"),
+    name: "jellyfish",
+    isPlaying: false,
+  },
+  {
     image: "./images/angler.png",
     imagePlaying: "./images/angler_playing.png",
     audio: new Audio("./audio/angler.mp3"),
     name: "angler",
     isPlaying: false,
   },
-  {
-    image: "./images/jellyfish.png",
-    audio: new Audio("./audio/jelly.mp3"),
-    name: "jellyfish",
-    isPlaying: false,
-  },
+
   {
     image: "./images/plankton.png",
     audio: new Audio("./audio/plankton.mp3"),
