@@ -26,11 +26,11 @@ const int ANGLER_PIN6 = 8;  //angler light
 
 
 // make an instance of the library:
-Adafruit_VL53L0X sensor = Adafruit_VL53L0X();
+// Adafruit_VL53L0X sensor = Adafruit_VL53L0X();
 
 
 //for time of flight distance sensor
-const int maxDistance = 2000;
+// const int maxDistance = 2000;
 
 // WebSocket client (use WiFiSSLClient for SSL/TLS)
 WiFiSSLClient wifiClient;
