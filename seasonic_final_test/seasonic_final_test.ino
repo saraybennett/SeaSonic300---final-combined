@@ -15,14 +15,9 @@ const int websocket_port = 443;                                            // SS
 
 // Pin definitions
 const int SERVO_PIN = 10;  //servo motor
-const int JELLY_PIN = 9;   //jelly light for testing
-const int ANGLER_PIN = 2;
-const int ANGLER_PIN1 = 3;
-const int ANGLER_PIN2 = 4;
-const int ANGLER_PIN3 = 5;
-const int ANGLER_PIN4 = 6;
-const int ANGLER_PIN5 = 7;
-const int ANGLER_PIN6 = 8;  //angler light
+const int JELLY_PIN = 2;   //jelly light for testing
+const int ANGLER_PIN = 9;
+ //angler light
 
 
 // make an instance of the library:
@@ -65,12 +60,7 @@ void setup() {
 
   // Initialize LEDs to off
   digitalWrite(ANGLER_PIN, LOW);
-  digitalWrite(ANGLER_PIN1, LOW);
-  digitalWrite(ANGLER_PIN2, LOW);
-  digitalWrite(ANGLER_PIN3, LOW);
-  digitalWrite(ANGLER_PIN4, LOW);
-  digitalWrite(ANGLER_PIN5, LOW);
-  digitalWrite(ANGLER_PIN6, LOW);
+
   digitalWrite(JELLY_PIN, LOW);
 
   // Initialize servo - eventually want a diff kind of motor
@@ -308,13 +298,7 @@ void handleMessage(String message) {
   // arduino handling of angler press information - angler been clicked & what to do about that
   else if (typeStr == "anglerState") {  //check for jellyState, your server is sending the message jellyState with a value of true or false
     anglerState = doc["value"];         //parse the led state from the returned json.
-    digitalWrite(ANGLER_PIN, anglerState ? HIGH : LOW);
-    digitalWrite(ANGLER_PIN1, anglerState ? HIGH : LOW);
-    digitalWrite(ANGLER_PIN2, anglerState ? HIGH : LOW);
-    digitalWrite(ANGLER_PIN3, anglerState ? HIGH : LOW);
-    digitalWrite(ANGLER_PIN4, anglerState ? HIGH : LOW);
-    digitalWrite(ANGLER_PIN5, anglerState ? HIGH : LOW);
-    digitalWrite(ANGLER_PIN6, anglerState ? HIGH : LOW);  //ternery, handle the light value accordingly
+    digitalWrite(ANGLER_PIN, anglerState ? HIGH : LOW); //ternery, handle the light value accordingly
     Serial.print("anglerState toggled to: ");
     Serial.println(anglerState ? "ON" : "OFF");
   }
