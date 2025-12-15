@@ -67,10 +67,28 @@ const cursorConfig = [
     isPlaying: false,
   },
   {
+    image: "./images/eel.png",
+    audio: new Audio("./audio/eel.mp3"),
+    name: "eel",
+    isPlaying: false,
+  },
+  {
+    image: "./images/seaweed2.png",
+    audio: new Audio("./audio/seaweed2.mp3"),
+    name: "seaweed2",
+    isPlaying: false,
+  },
+  {
     image: "./images/angler.png",
     imagePlaying: "./images/angler_playing.png",
     audio: new Audio("./audio/angler.mp3"),
     name: "jellyfish",
+    isPlaying: false,
+  },
+  {
+    image: "./images/seaweed.png",
+    audio: new Audio("./audio/seaweed.mp3"),
+    name: "seaweed",
     isPlaying: false,
   },
 
@@ -92,30 +110,11 @@ const cursorConfig = [
     name: "urchin",
     isPlaying: false,
   },
-  {
-    image: "./images/seaweed.png",
-    audio: new Audio("./audio/seaweed.mp3"),
-    name: "seaweed",
-    isPlaying: false,
-  },
+
   {
     image: "./images/gearsnail.png",
     audio: new Audio("./audio/gearsnail.mp3"),
     name: "gearsnail",
-    isPlaying: false,
-  },
-
-  {
-    image: "./images/eel.png",
-    audio: new Audio("./audio/eel.mp3"),
-    name: "eel",
-    isPlaying: false,
-  },
-
-  {
-    image: "./images/seaweed2.png",
-    audio: new Audio("./audio/seaweed2.mp3"),
-    name: "seaweed2",
     isPlaying: false,
   },
 ];
