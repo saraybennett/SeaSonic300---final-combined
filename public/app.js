@@ -55,12 +55,6 @@ let userCursorServer;
 // Cursor-to-audio mapping - each cursor has its own image and audio
 const cursorConfig = [
   {
-    image: "./images/plankton2.png",
-    audio: new Audio("./audio/background.mp3"),
-    name: "plankton2",
-    isPlaying: false,
-  },
-  {
     image: "./images/jellyfish.png",
     audio: new Audio("./audio/jelly.mp3"),
     name: "angler",
@@ -72,6 +66,14 @@ const cursorConfig = [
     name: "eel",
     isPlaying: false,
   },
+
+  {
+    image: "./images/angler.png",
+    imagePlaying: "./images/angler_playing.png",
+    audio: new Audio("./audio/angler.mp3"),
+    name: "jellyfish",
+    isPlaying: false,
+  },
   {
     image: "./images/seaweed2.png",
     audio: new Audio("./audio/seaweed2.mp3"),
@@ -79,10 +81,9 @@ const cursorConfig = [
     isPlaying: false,
   },
   {
-    image: "./images/angler.png",
-    imagePlaying: "./images/angler_playing.png",
-    audio: new Audio("./audio/angler.mp3"),
-    name: "jellyfish",
+    image: "./images/plankton2.png",
+    audio: new Audio("./audio/background.mp3"),
+    name: "plankton2",
     isPlaying: false,
   },
   {
@@ -135,7 +136,7 @@ window.onload = function () {
   let displayWelcome = document.getElementById("popup_text");
 
   displayWelcome.innerHTML =
-    "Welcome to the SeaSonic3000! <br> <br>  A new era began in 2075. The space mission to colonize Mars was a success, but only narcissists were able to survive up there. Back on Earth, society began to flourish. Humanity used AI to adapt new technologies with nature. In turn, the creatures we studied evolved with us and our technological advancements.";
+    "Welcome to the SeaSonic3000! <br> <br>  A new era began in the year 3000… <br> <br>The space mission to colonize Mars was a success, but only humans lacking necessary social skills like empathy and awareness of ecological impact were able to thrive there. <br> <br>Back on Earth, society began to flourish. Humanity used AI to further research and adapt technology suited to explore and conserve the oceans. In alignment with the cycles and rhythms of nature, technology became symbiotic with the systems from which it came.";
   window.scrollTo({
     top: 0,
     left: 0,
@@ -145,7 +146,7 @@ window.onload = function () {
   let nextButton = document.getElementById("next-button");
   nextButton.addEventListener("click", function (event) {
     displayWelcome.innerHTML =
-      "This is a collaborative physical and web-based project linked through a shared sonic experience. There will be elements of the site that affect the physical world and vice versa. When you enter the site, you’ll be transformed into one of the creatures.  <br> <br> Each creature makes a unique sound. Can you discover what yours is? Start by clicking or tapping your creature and see where that takes you! ";
+      "When you enter the site, you’ll be transformed into one of the creatures.  <br> <br> Each creature makes a unique sound. Can you discover what yours is? Start by clicking or tapping your creature and see where that takes you! ";
     nextButton.style.visibility = "hidden";
     let continueButton = document.getElementById("continue_button");
     continueButton.style.visibility = "visible";
@@ -293,7 +294,7 @@ window.onload = function () {
             }
             // searches the user array for the correct user based on data being received
             const targetCreature = cursorConfig.find(
-              (item) => item.name === data.who
+              (item) => item.name === data.who,
             );
 
             if (targetCreature) {
@@ -347,7 +348,7 @@ window.onload = function () {
               x: x,
               y: y,
               cursor: userCursor,
-            })
+            }),
           );
         }
       });
@@ -360,7 +361,7 @@ window.onload = function () {
             JSON.stringify({
               type: "userClick",
               name: userName,
-            })
+            }),
           );
         }
 
